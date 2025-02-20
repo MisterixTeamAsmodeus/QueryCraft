@@ -1,0 +1,1 @@
+#include "QueryCraft/joincolumn.h"

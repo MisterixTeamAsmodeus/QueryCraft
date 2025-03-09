@@ -23,11 +23,6 @@ struct QUERYCRAFT_EXPORT SortColumn
     Type sortType = Type::ASC;
 };
 
-inline SortColumn QUERYCRAFT_EXPORT randomSort()
-{
-    SortColumn column;
-    column.column.setAlias("RANDOM ()");
-    return column;
-}
+QUERYCRAFT_EXPORT inline SortColumn randomSort();
 
 } // namespace QueryCraft

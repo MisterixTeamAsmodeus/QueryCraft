@@ -474,6 +474,6 @@ using ConditionInfo = ConditionGroup::Condition;
  *
  * @return Результат операции "и" для двух перечислений ColumnInfo::Settings.
  */
-inline ColumnInfo::Settings QUERYCRAFT_EXPORT operator&(ColumnInfo::Settings a, ColumnInfo::Settings b);
+QUERYCRAFT_EXPORT inline ColumnInfo::Settings operator&(ColumnInfo::Settings a, ColumnInfo::Settings b);
 
 } // namespace QueryCraft

@@ -56,4 +56,26 @@ std::vector<ColumnInfo> Table::columns() const
     return _columns;
 }
 
+int Table::indexOf(const std::string& name) const
+{
+    const auto it = std::find_if(_columns.begin(), _columns.end(), [&name](const auto& column) {
+        return column.name() == name;
+    });
+
+    if(it == _columns.end())
+        throw std::invalid_argument("Данной колонки нет в таблице");
+
+    return std::distance(_columns.begin(), it);
+}
+
+int Table::indexOf(const ColumnInfo& column) const
+{
+    const auto it = std::find(_columns.begin(), _columns.end(), column);
+
+    if(it == _columns.end())
+        throw std::invalid_argument("Данной колонки нет в таблице");
+
+    return std::distance(_columns.begin(), it);
+}
+
 } // namespace QueryCraft

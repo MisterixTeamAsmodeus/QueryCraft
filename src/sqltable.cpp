@@ -187,7 +187,7 @@ std::string SqlTable::selectRowsSql(
         sqlStream.seekp(-2, std::stringstream::cur);
 
     if(condition.isValid())
-        sqlStream << " WHERE " << condition.unwrap(CondionViewType::ALIAS);
+        sqlStream << " WHERE " << condition.unwrap(CondionViewType::FULL_NAME);
 
     if(!sortColumns.empty()) {
         sqlStream << " ORDER BY ";

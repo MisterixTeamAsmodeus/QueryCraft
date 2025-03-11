@@ -99,6 +99,10 @@ public:
      */
     std::vector<ColumnInfo> columns() const;
 
+    int indexOf(const std::string& name) const;
+
+    int indexOf(const ColumnInfo& column) const;
+
 protected:
     /// Название схемы таблицы.
     std::string _scheme {};

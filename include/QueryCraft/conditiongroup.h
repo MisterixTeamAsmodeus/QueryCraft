@@ -466,6 +466,8 @@ private:
 using ColumnInfo = ConditionGroup::Condition::Column;
 using ConditionInfo = ConditionGroup::Condition;
 
+using ColumnSettings = ConditionGroup::Condition::Column::Settings;
+
 /**
  * @brief Оператор "и" для перечисления ColumnInfo::Settings.
  *

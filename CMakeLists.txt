@@ -7,7 +7,6 @@ project(${query_craft_project_name} LANGUAGES CXX)
 
 set(HEADER_FILES
         include/QueryCraft/querycraft.h
-        include/QueryCraft/querycraft_global.h
         include/QueryCraft/sqltable.h
         include/QueryCraft/table.h
         include/QueryCraft/conditiongroup.h
@@ -54,7 +53,7 @@ set(SOURCE_FILES
 
 add_definitions(-DQUERYCRAFT_LIBRARY)
 
-add_library(${PROJECT_NAME} SHARED ${HEADER_FILES} ${SOURCE_FILES})
+add_library(${PROJECT_NAME} STATIC ${HEADER_FILES} ${SOURCE_FILES})
 
 target_compile_features(${query_craft_project_name} PUBLIC cxx_std_14)
 

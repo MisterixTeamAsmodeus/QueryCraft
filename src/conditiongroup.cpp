@@ -11,6 +11,19 @@ ConditionGroup::Condition::Column::Column(std::string name, const Settings setti
 {
 }
 
+bool ConditionGroup::Condition::Column::operator==(const Column& rhs) const
+{
+    return _name == rhs._name
+        && _fullName == rhs._fullName
+        && _alias == rhs._alias
+        && _columnSettings == rhs._columnSettings;
+}
+
+bool ConditionGroup::Condition::Column::operator!=(const Column& rhs) const
+{
+    return !(*this == rhs);
+}
+
 std::string ConditionGroup::Condition::Column::name() const
 {
     return _name;

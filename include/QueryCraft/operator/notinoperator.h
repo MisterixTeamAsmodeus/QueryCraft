@@ -6,7 +6,7 @@ namespace QueryCraft {
 namespace Operator {
 
 /// Класс, представляющий оператор "NOT IN"
-class QUERYCRAFT_EXPORT NotInOperator final : public IOperator
+class NotInOperator final : public IOperator
 {
 public:
     ~NotInOperator() override = default;

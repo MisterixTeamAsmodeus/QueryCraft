@@ -6,7 +6,7 @@ namespace QueryCraft {
 namespace Operator {
 
 /// Класс, представляющий оператор ">"
-class QUERYCRAFT_EXPORT MoreOperator final : public IOperator
+class MoreOperator final : public IOperator
 {
 public:
     ~MoreOperator() override = default;

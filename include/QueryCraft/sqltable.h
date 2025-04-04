@@ -2,7 +2,6 @@
 
 #include "helper/tuplehelper.h"
 #include "joincolumn.h"
-#include "querycraft_global.h"
 #include "sortcolumn.h"
 #include "table.h"
 
@@ -10,7 +9,7 @@ namespace QueryCraft {
 
 /// Класс, представляющий таблицу SQL.
 /// Расширяет класс Table и добавляет функциональность для генерации sql запросов.
-class QUERYCRAFT_EXPORT SqlTable : public Table
+class SqlTable : public Table
 {
 public:
     /// Тип, представляющий строку таблицы.

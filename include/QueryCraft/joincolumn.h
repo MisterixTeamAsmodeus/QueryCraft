@@ -2,12 +2,11 @@
 
 #include "table.h"
 
-#include <ostream>
 #include <cstdint>
 
 namespace QueryCraft {
 
-struct QUERYCRAFT_EXPORT JoinColumn
+struct JoinColumn
 {
 
     /**
@@ -36,6 +35,6 @@ struct QUERYCRAFT_EXPORT JoinColumn
     ConditionGroup condition {};
 };
 
-QUERYCRAFT_EXPORT inline std::ostream& operator<<(std::ostream& os, const JoinColumn& obj);
+std::ostream& operator<<(std::ostream& os, const JoinColumn& obj);
 
 } // namespace QueryCraft

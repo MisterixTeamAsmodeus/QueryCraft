@@ -6,7 +6,7 @@ namespace QueryCraft {
 namespace Operator {
 
 /// Класс, представляющий оператор "IN"
-class QUERYCRAFT_EXPORT InOperator final : public IOperator
+class InOperator final : public IOperator
 {
 public:
     ~InOperator() override = default;

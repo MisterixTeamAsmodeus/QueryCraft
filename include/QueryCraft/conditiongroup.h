@@ -11,7 +11,6 @@
 #include "operator/moreorequalsoperator.h"
 #include "operator/notequalsoperator.h"
 #include "operator/notinoperator.h"
-#include "querycraft_global.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -23,13 +22,13 @@ namespace QueryCraft {
 
 /// Структура ConditionGroup предоставляет возможность создания сложных условий с использованием логических операторов
 /// (И, ИЛИ) и поддерживает создание условий для столбцов таблицы.
-struct QUERYCRAFT_EXPORT ConditionGroup
+struct ConditionGroup
 {
     /// Cтруктура представляющая отдельное условие.
-    struct QUERYCRAFT_EXPORT Condition
+    struct Condition
     {
         /// Определяет структуру для хранения информации о столбце таблицы.
-        struct QUERYCRAFT_EXPORT Column
+        struct Column
         {
 
             /**
@@ -71,6 +70,10 @@ struct QUERYCRAFT_EXPORT ConditionGroup
             Column(const Column& other) = default;
 
             Column(Column&& other) noexcept = default;
+
+            bool operator==(const Column& rhs) const;
+
+            bool operator!=(const Column& rhs) const;
 
             /**
              * Возвращает имя столбца.
@@ -476,6 +479,6 @@ using ColumnSettings = ConditionGroup::Condition::Column::Settings;
  *
  * @return Результат операции "и" для двух перечислений ColumnInfo::Settings.
  */
-QUERYCRAFT_EXPORT inline ColumnInfo::Settings operator&(ColumnInfo::Settings a, ColumnInfo::Settings b);
+ColumnInfo::Settings operator&(ColumnInfo::Settings a, ColumnInfo::Settings b);
 
 } // namespace QueryCraft

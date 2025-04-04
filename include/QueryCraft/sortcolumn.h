@@ -5,7 +5,7 @@
 
 namespace QueryCraft {
 
-struct QUERYCRAFT_EXPORT SortColumn
+struct SortColumn
 {
     /**
      * @brief Типы сортировки в SQL-запросах.
@@ -23,6 +23,6 @@ struct QUERYCRAFT_EXPORT SortColumn
     Type sortType = Type::ASC;
 };
 
-QUERYCRAFT_EXPORT inline SortColumn randomSort();
+inline SortColumn randomSort();
 
 } // namespace QueryCraft

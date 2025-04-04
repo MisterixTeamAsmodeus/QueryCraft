@@ -6,7 +6,7 @@ namespace QueryCraft {
 namespace Operator {
 
 /// Класс, представляющий оператор "<>"
-class QUERYCRAFT_EXPORT NotEqualsOperator final : public IOperator
+class NotEqualsOperator final : public IOperator
 {
 public:
     ~NotEqualsOperator() override = default;

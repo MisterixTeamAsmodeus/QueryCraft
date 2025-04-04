@@ -1,14 +1,12 @@
 #pragma once
 
-#include "../querycraft_global.h"
-
 #include <string>
 
 namespace QueryCraft {
 namespace Operator {
 
 /// Интерфейс описывающий операторы используемые в логических операторах
-class QUERYCRAFT_EXPORT IOperator
+class IOperator
 {
 public:
     virtual ~IOperator() = default;

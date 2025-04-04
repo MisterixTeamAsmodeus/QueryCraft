@@ -1,7 +1,6 @@
 #pragma once
 
 #include "conditiongroup.h"
-#include "querycraft_global.h"
 
 #include <unordered_map>
 
@@ -9,7 +8,7 @@ namespace QueryCraft {
 /**
  * Класс Table представляет таблицу в базе данных и предоставляет интерфейс для работы с ее столбцами.
  */
-class QUERYCRAFT_EXPORT Table
+class Table
 {
 public:
     Table() = default;

@@ -122,6 +122,10 @@ struct ConditionGroup
 
             Column& operator=(Column&& other) noexcept = default;
 
+            bool operator==(const Column& rhs) const;
+
+            bool operator!=(const Column& rhs) const;
+
             /**
              * Возвращает условие, проверяющее, является ли значение столбца пустым.
              * @return Условие, проверяющее, является ли значение столбца пустым.

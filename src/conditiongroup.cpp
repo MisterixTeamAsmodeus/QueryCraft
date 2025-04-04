@@ -59,6 +59,19 @@ bool ConditionGroup::Condition::Column::hasSettings(const Settings settings) con
     return (_columnSettings & settings) == settings;
 }
 
+bool ConditionGroup::Condition::Column::operator==(const Column& rhs) const
+{
+    return _name == rhs._name
+        && _fullName == rhs._fullName
+        && _alias == rhs._alias
+        && _columnSettings == rhs._columnSettings;
+}
+
+bool ConditionGroup::Condition::Column::operator!=(const Column& rhs) const
+{
+    return !(*this == rhs);
+}
+
 ConditionGroup::Condition ConditionGroup::Condition::Column::isNull() const
 {
     return createCondition(std::move(std::make_shared<Operator::IsOperator>()), { nullValue() });

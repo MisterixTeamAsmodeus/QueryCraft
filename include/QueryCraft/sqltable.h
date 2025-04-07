@@ -90,7 +90,7 @@ public:
      * для изменения поведения нужно переопределить метод для своего типа
      */
     template<typename... Args>
-    SqlTable& addRow(Args&&... args)
+    SqlTable& addRowArgs(Args&&... args)
     {
         auto values = std::make_tuple<Args...>(std::forward<Args>(args)...);
 

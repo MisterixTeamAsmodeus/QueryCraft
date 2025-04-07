@@ -13,7 +13,7 @@ namespace Helper {
  * @return Строковое представление значения.
  */
 template<typename T>
-std::string convertToString(T&& value)
+std::string convertToString(T& value)
 {
     std::stringstream stream;
     stream << value;

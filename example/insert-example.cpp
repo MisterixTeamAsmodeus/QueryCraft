@@ -11,10 +11,10 @@ int main()
         ColumnInfo("c2"),
         ColumnInfo("c3"));
 
-    table.addRow(5, "124", true);
-    table.addRow(5, "874", true);
+    table.addRowArgs(5, "124", true);
+    table.addRowArgs(5, "874", true);
     std::cout << table.insertRowSql() << "\n";
 
-    table.addRow(5, true);
+    table.addRowArgs(5, true);
     std::cout << table.insertRowSql({ table.column("c1"), table.column("c3") }) << "\n";
 }

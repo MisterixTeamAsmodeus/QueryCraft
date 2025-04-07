@@ -11,12 +11,12 @@ int main()
         ColumnInfo("c2"),
         ColumnInfo("c3"));
 
-    table.addRow(5, "124", true);
+    table.addRowArgs(5, "124", true);
     std::cout << table.updateRowSql(table.column("c1") > 5 && table.column("c2") < 7) << "\n";
 
-    table.addRow(5, "874", true);
+    table.addRowArgs(5, "874", true);
     std::cout << table.updateRowSql() << "\n";
 
-    table.addRow(5, true);
+    table.addRowArgs(5, true);
     std::cout << table.updateRowArgsSql({}, { table.column("c1"), table.column("c3") }) << "\n";
 }

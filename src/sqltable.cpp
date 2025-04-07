@@ -1,5 +1,20 @@
 #include "QueryCraft/sqltable.h"
 
+namespace {
+void insert_with_escaping_character(std::stringstream& sqlStream, const std::string& value)
+{
+    if(value != QueryCraft::ColumnInfo::nullValue()) {
+        sqlStream << "'";
+    }
+    // TODO добавить экранирование символов
+    sqlStream << value;
+
+    if(value != QueryCraft::ColumnInfo::nullValue()) {
+        sqlStream << "'";
+    }
+}
+} // namespace
+
 namespace QueryCraft {
 
 SqlTable::SqlTable(std::string table_name, std::string scheme,
@@ -64,7 +79,8 @@ std::string SqlTable::insertRowSql(const std::vector<ColumnInfo>& columns)
         sqlStream << " (";
 
         for(const auto& value : row) {
-            sqlStream << value << ", ";
+            insert_with_escaping_character(sqlStream, value);
+            sqlStream << ", ";
         }
 
         sqlStream.seekp(-2, std::stringstream::cur);
@@ -107,8 +123,13 @@ std::string SqlTable::updateRowSql(const ConditionGroup& condition, const std::v
     sqlStream << "UPDATE " << tableName() << " SET ";
 
     const auto& row = rows.front();
-    for(int i = 0; i < updateColumns.size(); i++)
-        sqlStream << updateColumns[i].name() << " = " << row[i] << ", ";
+    for(int i = 0; i < updateColumns.size(); i++) {
+        sqlStream << updateColumns[i].name() << " = ";
+
+        insert_with_escaping_character(sqlStream, row[i]);
+
+        sqlStream << ", ";
+    }
 
     sqlStream.seekp(-2, std::stringstream::cur);
 

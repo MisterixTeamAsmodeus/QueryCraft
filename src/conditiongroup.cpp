@@ -2,6 +2,9 @@
 
 #include "QueryCraft/operator/isnotoperator.h"
 #include "QueryCraft/operator/isoperator.h"
+#include "QueryCraft/operator/likeoperator.h"
+
+#include <iostream>
 
 namespace QueryCraft {
 
@@ -51,12 +54,12 @@ void ConditionGroup::Condition::Column::setAlias(const std::string& alias)
 
 void ConditionGroup::Condition::Column::addSettings(const Settings settings)
 {
-    _columnSettings = settings & _columnSettings;
+    _columnSettings = settings | _columnSettings;
 }
 
 bool ConditionGroup::Condition::Column::hasSettings(const Settings settings) const
 {
-    return (_columnSettings & settings) == settings;
+    return (_columnSettings | settings) == _columnSettings;
 }
 
 ConditionGroup::Condition ConditionGroup::Condition::Column::isNull() const
@@ -67,6 +70,11 @@ ConditionGroup::Condition ConditionGroup::Condition::Column::isNull() const
 ConditionGroup::Condition ConditionGroup::Condition::Column::notNull() const
 {
     return createCondition(std::move(std::make_shared<Operator::IsNotOperator>()), { nullValue() });
+}
+
+ConditionGroup::Condition ConditionGroup::Condition::Column::like(const std::string& pattern) const
+{
+    return createCondition(std::move(std::make_shared<Operator::LikeOperator>()), { pattern });
 }
 
 bool ConditionGroup::Condition::Column::isValid() const
@@ -320,14 +328,19 @@ void ConditionGroup::unwrapTree(const ConditionGroup* node, std::stringstream& s
     stream << ")";
 }
 
-ColumnInfo::Settings operator&(ColumnInfo::Settings a, ColumnInfo::Settings b)
+ColumnInfo::Settings operator|(ColumnInfo::Settings a, ColumnInfo::Settings b)
 {
-    return static_cast<ColumnInfo::Settings>(static_cast<short>(a) & static_cast<short>(b));
+    return static_cast<ColumnInfo::Settings>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
 }
 
 ColumnSettings primary_key()
 {
-    return ColumnSettings::PRIMARY_KEY;
+    return ColumnSettings::PRIMARY_KEY | ColumnSettings::NOT_NULL;
+}
+
+ColumnSettings not_null()
+{
+    return ColumnSettings::NOT_NULL;
 }
 
 } // namespace QueryCraft

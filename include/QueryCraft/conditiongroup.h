@@ -44,7 +44,9 @@ struct ConditionGroup
                 /**
                  * Столбец является первичным ключом.
                  */
-                PRIMARY_KEY = 1,
+                PRIMARY_KEY = 1 << 0,
+
+                NOT_NULL = 1 << 1,
             };
 
             /**
@@ -128,6 +130,8 @@ struct ConditionGroup
              * @return Условие, проверяющее, является ли значение столбца не пустым.
              */
             Condition notNull() const;
+
+            Condition like(const std::string& pattern) const;
 
             /**
              * Возвращает условие, проверяющее, принадлежит ли значение столбца к указанным значениям.
@@ -476,6 +480,18 @@ using ColumnSettings = ConditionGroup::Condition::Column::Settings;
  */
 ColumnInfo::Settings operator&(ColumnInfo::Settings a, ColumnInfo::Settings b);
 
+/**
+ * @brief Оператор "и" для перечисления ColumnInfo::Settings.
+ *
+ * @param a Первый операнд.
+ * @param b Второй операнд.
+ *
+ * @return Результат операции "и" для двух перечислений ColumnInfo::Settings.
+ */
+ColumnInfo::Settings operator|(ColumnInfo::Settings a, ColumnInfo::Settings b);
+
 ColumnSettings primary_key();
+
+ColumnSettings not_null();
 
 } // namespace QueryCraft

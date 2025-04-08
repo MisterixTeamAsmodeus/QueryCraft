@@ -45,11 +45,6 @@ struct ConditionGroup
                  * Столбец является первичным ключом.
                  */
                 PRIMARY_KEY = 1,
-
-                /**
-                 * Столбец не может содержать NULL-значения.
-                 */
-                NOT_NULL = 2
             };
 
             /**
@@ -480,5 +475,7 @@ using ColumnSettings = ConditionGroup::Condition::Column::Settings;
  * @return Результат операции "и" для двух перечислений ColumnInfo::Settings.
  */
 ColumnInfo::Settings operator&(ColumnInfo::Settings a, ColumnInfo::Settings b);
+
+ColumnSettings primary_key();
 
 } // namespace QueryCraft

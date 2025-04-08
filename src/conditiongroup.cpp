@@ -152,7 +152,7 @@ std::string ConditionGroup::Condition::unwrap(const CondionViewType viewType) co
 
     switch(viewType) {
         case CondionViewType::NAME: {
-            stream << _column.name();
+            stream << "\"" << _column.name() << "\"";
             break;
         }
         case CondionViewType::ALIAS: {
@@ -323,6 +323,11 @@ void ConditionGroup::unwrapTree(const ConditionGroup* node, std::stringstream& s
 ColumnInfo::Settings operator&(ColumnInfo::Settings a, ColumnInfo::Settings b)
 {
     return static_cast<ColumnInfo::Settings>(static_cast<short>(a) & static_cast<short>(b));
+}
+
+ColumnSettings primary_key()
+{
+    return ColumnSettings::PRIMARY_KEY;
 }
 
 } // namespace QueryCraft

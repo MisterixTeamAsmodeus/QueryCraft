@@ -21,5 +21,11 @@ std::string convertToString(T& value)
     return stream.str();
 }
 
+template<>
+inline std::string convertToString(bool& value)
+{
+    return value ? "true" : "false";
+}
+
 } // namespace Helper
 } // namespace QueryCraft

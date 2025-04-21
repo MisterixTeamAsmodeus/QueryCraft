@@ -181,11 +181,8 @@ std::string SqlTable::selectRowsSql(
     sqlStream << " FROM " << tableName();
 
     for(const auto& joinColumn : joinColumns) {
-        sqlStream << joinColumn << ", ";
+        sqlStream << joinColumn << " ";
     }
-    if(!joinColumns.empty())
-        sqlStream.seekp(-2, std::stringstream::cur);
-
     if(condition.isValid())
         sqlStream << " WHERE " << condition.unwrap(CondionViewType::FULL_NAME);
 

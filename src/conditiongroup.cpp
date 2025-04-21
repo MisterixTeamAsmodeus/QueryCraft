@@ -2,6 +2,9 @@
 
 #include "QueryCraft/operator/isnotoperator.h"
 #include "QueryCraft/operator/isoperator.h"
+#include "QueryCraft/operator/likeoperator.h"
+
+#include <iostream>
 
 namespace QueryCraft {
 
@@ -51,12 +54,12 @@ void ConditionGroup::Condition::Column::setAlias(const std::string& alias)
 
 void ConditionGroup::Condition::Column::addSettings(const Settings settings)
 {
-    _columnSettings = settings & _columnSettings;
+    _columnSettings = settings | _columnSettings;
 }
 
 bool ConditionGroup::Condition::Column::hasSettings(const Settings settings) const
 {
-    return (_columnSettings & settings) == settings;
+    return (_columnSettings | settings) == _columnSettings;
 }
 
 ConditionGroup::Condition ConditionGroup::Condition::Column::isNull() const
@@ -69,18 +72,29 @@ ConditionGroup::Condition ConditionGroup::Condition::Column::notNull() const
     return createCondition(std::move(std::make_shared<Operator::IsNotOperator>()), { nullValue() });
 }
 
+ConditionGroup::Condition ConditionGroup::Condition::Column::like(const std::string& pattern) const
+{
+    return createCondition(std::move(std::make_shared<Operator::LikeOperator>()), { pattern });
+}
+
+ConditionGroup::Condition ConditionGroup::Condition::Column::equals(const Column& value) const
+{
+    return createCondition(std::make_shared<Operator::EqualsOperator>(), { value.fullName() }, false);
+}
+
 bool ConditionGroup::Condition::Column::isValid() const
 {
     return !_name.empty() || !_fullName.empty() || !_alias.empty() || _columnSettings != Settings::NONE;
 }
 
-ConditionGroup::Condition ConditionGroup::Condition::Column::createCondition(std::shared_ptr<Operator::IOperator>&& conditionOperator, std::vector<std::string>&& values) const
+ConditionGroup::Condition ConditionGroup::Condition::Column::createCondition(std::shared_ptr<Operator::IOperator>&& conditionOperator, std::vector<std::string>&& values, bool need_forging) const
 {
     Condition condition;
 
     condition._conditionOperator = std::move(conditionOperator);
     condition._column = *this;
     condition._values = std::move(values);
+    condition._need_forging = need_forging;
 
     return std::move(condition);
 }
@@ -152,7 +166,7 @@ std::string ConditionGroup::Condition::unwrap(const CondionViewType viewType) co
 
     switch(viewType) {
         case CondionViewType::NAME: {
-            stream << _column.name();
+            stream << "\"" << _column.name() << "\"";
             break;
         }
         case CondionViewType::ALIAS: {
@@ -171,12 +185,12 @@ std::string ConditionGroup::Condition::unwrap(const CondionViewType viewType) co
         stream << "(";
 
     std::for_each(_values.begin(), _values.end(), [&stream, this](const auto& value) {
-        if(value != Column::nullValue())
+        if(value != Column::nullValue() && _need_forging)
             stream << "'";
 
         stream << value;
 
-        if(value != Column::nullValue())
+        if(value != Column::nullValue() && _need_forging)
             stream << "'";
 
         if(_conditionOperator->needBracket())
@@ -320,9 +334,19 @@ void ConditionGroup::unwrapTree(const ConditionGroup* node, std::stringstream& s
     stream << ")";
 }
 
-ColumnInfo::Settings operator&(ColumnInfo::Settings a, ColumnInfo::Settings b)
+ColumnInfo::Settings operator|(ColumnInfo::Settings a, ColumnInfo::Settings b)
 {
-    return static_cast<ColumnInfo::Settings>(static_cast<short>(a) & static_cast<short>(b));
+    return static_cast<ColumnInfo::Settings>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
+}
+
+ColumnSettings primary_key()
+{
+    return ColumnSettings::PRIMARY_KEY | ColumnSettings::NOT_NULL;
+}
+
+ColumnSettings not_null()
+{
+    return ColumnSettings::NOT_NULL;
 }
 
 } // namespace QueryCraft

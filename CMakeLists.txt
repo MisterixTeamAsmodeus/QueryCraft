@@ -5,51 +5,8 @@ option(QUERY_CRAFT_EXAMPLE "Add examples file as executable (on|off)" OFF )
 
 project(${query_craft_project_name} LANGUAGES CXX)
 
-set(HEADER_FILES
-        include/QueryCraft/querycraft.h
-        include/QueryCraft/sqltable.h
-        include/QueryCraft/table.h
-        include/QueryCraft/conditiongroup.h
-        include/QueryCraft/joincolumn.h
-        include/QueryCraft/sortcolumn.h
-
-        include/QueryCraft/enum/conditionviewtype.h
-        include/QueryCraft/enum/logicaloperator.h
-
-        include/QueryCraft/helper/tuplehelper.h
-        include/QueryCraft/helper/typeconverter.h
-
-        include/QueryCraft/operator/equalsoperator.h
-        include/QueryCraft/operator/inoperator.h
-        include/QueryCraft/operator/notinoperator.h
-        include/QueryCraft/operator/ioperator.h
-        include/QueryCraft/operator/lessoperator.h
-        include/QueryCraft/operator/lessorequalsoperator.h
-        include/QueryCraft/operator/moreoperator.h
-        include/QueryCraft/operator/moreorequalsoperator.h
-        include/QueryCraft/operator/notequalsoperator.h
-        include/QueryCraft/operator/isnotoperator.h
-        include/QueryCraft/operator/isoperator.h
-)
-
-set(SOURCE_FILES
-        src/sqltable.cpp
-        src/table.cpp
-        src/conditiongroup.cpp
-        src/joincolumn.cpp
-        src/sortcolumn.cpp
-
-        src/operator/equalsoperator.cpp
-        src/operator/inoperator.cpp
-        src/operator/notinoperator.cpp
-        src/operator/lessoperator.cpp
-        src/operator/lessorequalsoperator.cpp
-        src/operator/moreoperator.cpp
-        src/operator/moreorequalsoperator.cpp
-        src/operator/notequalsoperator.cpp
-        src/operator/isnotoperator.cpp
-        src/operator/isoperator.cpp
-)
+file(GLOB_RECURSE HEADER_FILES include/*.h)
+file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 
 add_definitions(-DQUERYCRAFT_LIBRARY)
 

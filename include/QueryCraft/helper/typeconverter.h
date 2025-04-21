@@ -13,12 +13,18 @@ namespace Helper {
  * @return Строковое представление значения.
  */
 template<typename T>
-std::string convertToString(T&& value)
+std::string convertToString(T& value)
 {
     std::stringstream stream;
     stream << value;
 
     return stream.str();
+}
+
+template<>
+inline std::string convertToString(bool& value)
+{
+    return value ? "true" : "false";
 }
 
 } // namespace Helper

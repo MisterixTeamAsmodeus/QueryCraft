@@ -44,12 +44,9 @@ struct ConditionGroup
                 /**
                  * Столбец является первичным ключом.
                  */
-                PRIMARY_KEY = 1,
+                PRIMARY_KEY = 1 << 0,
 
-                /**
-                 * Столбец не может содержать NULL-значения.
-                 */
-                NOT_NULL = 2
+                NOT_NULL = 1 << 1,
             };
 
             /**
@@ -133,6 +130,8 @@ struct ConditionGroup
              * @return Условие, проверяющее, является ли значение столбца не пустым.
              */
             Condition notNull() const;
+
+            Condition like(const std::string& pattern) const;
 
             /**
              * Возвращает условие, проверяющее, принадлежит ли значение столбца к указанным значениям.
@@ -219,6 +218,15 @@ struct ConditionGroup
             }
 
             /**
+             * Возвращает условие, проверяющее, равно ли значение столбца указанному значению.
+             * @tparam T Тип значения, которое может быть преобразовано в строку.
+             * @param value Значение, к которому должно быть равно значение столбца.
+             * @return Условие, проверяющее, равно ли значение столбца указанному значению.
+             */
+
+            Condition equals(const Column& value) const;
+
+            /**
              * Возвращает условие, проверяющее, не равно ли значение столбца указанному значению.
              * @tparam T Тип значения, которое может быть преобразовано в строку.
              * @param value Значение, к которому не должно быть равно значение столбца.
@@ -291,7 +299,7 @@ struct ConditionGroup
              * @param values Значения, которые будут использованы в условии.
              * @return Объект условия.
              */
-            Condition createCondition(std::shared_ptr<Operator::IOperator>&& conditionOperator, std::vector<std::string>&& values) const;
+            Condition createCondition(std::shared_ptr<Operator::IOperator>&& conditionOperator, std::vector<std::string>&& values, bool need_forging = true) const;
 
         private:
             /// Имя столбца.
@@ -370,6 +378,7 @@ struct ConditionGroup
         std::shared_ptr<Operator::IOperator> _conditionOperator {};
         Column _column {};
         std::vector<std::string> _values {};
+        bool _need_forging = true;
     };
 
     ConditionGroup() = default;
@@ -480,5 +489,19 @@ using ColumnSettings = ConditionGroup::Condition::Column::Settings;
  * @return Результат операции "и" для двух перечислений ColumnInfo::Settings.
  */
 ColumnInfo::Settings operator&(ColumnInfo::Settings a, ColumnInfo::Settings b);
+
+/**
+ * @brief Оператор "и" для перечисления ColumnInfo::Settings.
+ *
+ * @param a Первый операнд.
+ * @param b Второй операнд.
+ *
+ * @return Результат операции "и" для двух перечислений ColumnInfo::Settings.
+ */
+ColumnInfo::Settings operator|(ColumnInfo::Settings a, ColumnInfo::Settings b);
+
+ColumnSettings primary_key();
+
+ColumnSettings not_null();
 
 } // namespace QueryCraft

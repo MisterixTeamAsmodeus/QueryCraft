@@ -1,17 +1,17 @@
 #include "QueryCraft/operator/inoperator.h"
 
-namespace QueryCraft {
-namespace Operator {
+namespace query_craft {
+namespace operators {
 
-std::string InOperator::sql() const
+std::string in_operator::sql() const
 {
     return "IN";
 }
 
-bool InOperator::needBracket() const
+bool in_operator::need_bracket() const
 {
     return true;
 }
 
-} // namespace Operator
-} // namespace QueryCraft
+} // namespace operators
+} // namespace query_craft

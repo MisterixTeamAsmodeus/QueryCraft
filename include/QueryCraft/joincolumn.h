@@ -4,37 +4,37 @@
 
 #include <cstdint>
 
-namespace QueryCraft {
+namespace query_craft {
 
-struct JoinColumn
+struct join_column
 {
 
     /**
      * @brief Типы соединений в SQL-запросах.
      */
-    enum class Type : uint8_t
+    enum class type : uint8_t
     {
         /// Внутреннее соединение (INNER JOIN). Выбираются только те записи, которые имеют совпадения в обеих таблицах.
-        INNER,
+        inner,
 
         /// Внешнее соединение (OUTER JOIN). Выбираются все записи из обеих таблиц, даже если в одной из них нет совпадений.
-        OUTER,
+        outer,
 
         /// Левое внешнее соединение (LEFT JOIN). Выбираются все записи из левой таблицы и совпадающие записи из правой таблицы.
-        LEFT,
+        left,
 
         /// Правое внешнее соединение (RIGHT JOIN). Выбираются все записи из правой таблицы и совпадающие записи из левой таблицы.
-        RIGHT,
+        right,
 
         /// Перекрестное соединение (CROSS JOIN). Выбираются все возможные комбинации записей из двух таблиц.
-        CROSS
+        cross
     };
 
-    Type joinType = Type::INNER;
-    Table joinedTable {};
-    ConditionGroup condition {};
+    type join_type = type::inner;
+    table joined_table {};
+    condition_group condition {};
 };
 
-std::ostream& operator<<(std::ostream& os, const JoinColumn& obj);
+std::ostream& operator<<(std::ostream& os, const join_column& obj);
 
-} // namespace QueryCraft
+} // namespace query_craft

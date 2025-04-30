@@ -1,8 +1,8 @@
 #include "QueryCraft/sortcolumn.h"
 
-QueryCraft::SortColumn QueryCraft::randomSort()
+query_craft::sort_column query_craft:: random_sort()
 {
-    SortColumn column;
-    column.column.setAlias("RANDOM ()");
+    sort_column column;
+    column.column.set_alias("RANDOM ()");
     return column;
 }

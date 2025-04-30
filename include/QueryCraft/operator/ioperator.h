@@ -2,8 +2,8 @@
 
 #include <string>
 
-namespace QueryCraft {
-namespace Operator {
+namespace query_craft {
+namespace operators {
 
 /// Интерфейс описывающий операторы используемые в логических операторах
 class IOperator
@@ -23,8 +23,8 @@ public:
      *
      * @return true, если скобки требуются, иначе false.
      */
-    virtual bool needBracket() const = 0;
+    virtual bool need_bracket() const = 0;
 };
 
-} // namespace Operator
-} // namespace QueryCraft
+} // namespace operators
+} // namespace query_craft

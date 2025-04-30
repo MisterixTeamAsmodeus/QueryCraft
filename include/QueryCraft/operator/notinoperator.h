@@ -2,19 +2,19 @@
 
 #include "ioperator.h"
 
-namespace QueryCraft {
-namespace Operator {
+namespace query_craft {
+namespace operators {
 
 /// Класс, представляющий оператор "NOT IN"
-class NotInOperator final : public IOperator
+class not_in_operator final : public IOperator
 {
 public:
-    ~NotInOperator() override = default;
+    ~not_in_operator() override = default;
 
     std::string sql() const override;
 
-    bool needBracket() const override;
+    bool need_bracket() const override;
 };
 
-} // namespace Operator
-} // namespace QueryCraft
+} // namespace operators
+} // namespace query_craft

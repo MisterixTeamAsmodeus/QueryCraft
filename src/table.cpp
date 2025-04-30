@@ -1,81 +1,67 @@
 #include "QueryCraft/table.h"
 
-namespace QueryCraft {
+namespace query_craft {
 
-Table::Table(std::string tableName, std::string scheme, const std::initializer_list<ColumnInfo>& columns)
-    : Table(std::move(tableName), std::move(scheme), columns.begin(), columns.end())
+table::table(std::string table_name, std::string scheme, const std::initializer_list<column_info>& columns)
+    : table(std::move(table_name), std::move(scheme), columns.begin(), columns.end())
 {
 }
 
-Table& Table::addColumn(ColumnInfo& column)
+table& table::add_column(column_info& column)
 {
-    std::stringstream aliasStream;
+    std::stringstream alias_stream;
     if(!_scheme.empty())
-        aliasStream << _scheme << "_";
+        alias_stream << _scheme << "_";
 
-    aliasStream << _tableName << "_" << column.name();
-    column.setAlias(aliasStream.str());
+    alias_stream << _table_name << "_" << column.name();
+    column.set_alias(alias_stream.str());
 
-    std::stringstream fullNameStream;
-    fullNameStream << tableName() << "."
-                   << "\"" << column.name() << "\"";
-    column.setFullName(fullNameStream.str());
+    std::stringstream full_name_stream;
+    full_name_stream << table_name() << "."
+                     << "\"" << column.name() << "\"";
+    column.set_full_name(full_name_stream.str());
 
-    if(_columnsMap.find(column.name()) != _columnsMap.end())
+    if(_columns_map.find(column.name()) != _columns_map.end())
         throw std::logic_error("Ошибка. Дублируется название колонки");
 
     _columns.push_back(column);
-    _columnsMap.emplace(column.name(), column);
+    _columns_map.emplace(column.name(), column);
 
     return *this;
 }
 
-std::string Table::tableName() const
+std::string table::table_name() const
 {
-    std::stringstream tableNameStream;
+    std::stringstream table_name_stream;
 
     if(!_scheme.empty())
-        tableNameStream << "\"" << _scheme << "\""
-                        << ".";
+        table_name_stream << "\"" << _scheme << "\""
+                          << ".";
 
-    tableNameStream << "\"" << _tableName << "\"";
+    table_name_stream << "\"" << _table_name << "\"";
 
-    return tableNameStream.str();
+    return table_name_stream.str();
 }
 
-ColumnInfo Table::column(const std::string& name) const
+column_info table::column(const std::string& name) const
 {
-    if(_columnsMap.find(name) == _columnsMap.end())
+    if(_columns_map.find(name) == _columns_map.end())
         throw std::invalid_argument("Данной колонки нет в таблице");
 
-    return _columnsMap.find(name)->second;
+    return _columns_map.find(name)->second;
 }
 
-std::vector<ColumnInfo> Table::columns() const
+column_info table::column(const int index) const
+{
+    if(_columns.size() <= index || index < 0)
+        throw std::invalid_argument("Неправельный индекс колонки");
+
+    return _columns[index];
+}
+
+std::vector<column_info> table::columns() const
 {
     return _columns;
 }
 
-int Table::indexOf(const std::string& name) const
-{
-    const auto it = std::find_if(_columns.begin(), _columns.end(), [&name](const auto& column) {
-        return column.name() == name;
-    });
-
-    if(it == _columns.end())
-        throw std::invalid_argument("Данной колонки нет в таблице");
-
-    return std::distance(_columns.begin(), it);
-}
-
-int Table::indexOf(const ColumnInfo& column) const
-{
-    const auto it = std::find(_columns.begin(), _columns.end(), column);
-
-    if(it == _columns.end())
-        throw std::invalid_argument("Данной колонки нет в таблице");
-
-    return std::distance(_columns.begin(), it);
-}
-
-} // namespace QueryCraft
+} // namespace query_craft

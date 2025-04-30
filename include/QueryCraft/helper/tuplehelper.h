@@ -4,9 +4,9 @@
 #include <tuple>
 #include <utility>
 
-namespace QueryCraft {
-namespace Helper {
-namespace Impl {
+namespace query_craft {
+namespace helper {
+namespace impl {
 
 /**
  * @brief Рекурсивная реализация цикла for_each для кортежей.
@@ -27,7 +27,7 @@ void for_each_impl(Tuple&& tuple, F&& f, std::index_sequence<Indices...>)
     };
 }
 
-} // namespace Impl
+} // namespace impl
 
 /**
  * @brief Выполняет цикл for_each для кортежа.
@@ -41,8 +41,8 @@ void for_each_impl(Tuple&& tuple, F&& f, std::index_sequence<Indices...>)
 template<typename F, typename... Args>
 void for_each(const std::tuple<Args...>& tuple, F&& f)
 {
-    Impl::for_each_impl(tuple, std::forward<F>(f), std::index_sequence_for<Args...> {});
+    impl::for_each_impl(tuple, std::forward<F>(f), std::index_sequence_for<Args...> {});
 }
 
-} // namespace Helper
-} // namespace QueryCraft
+} // namespace helper
+} // namespace query_craft

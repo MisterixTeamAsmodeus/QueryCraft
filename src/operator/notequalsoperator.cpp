@@ -1,17 +1,17 @@
 #include "QueryCraft/operator/notequalsoperator.h"
 
-namespace QueryCraft {
-namespace Operator {
+namespace query_craft {
+namespace operators {
 
-std::string NotEqualsOperator::sql() const
+std::string not_equals_operator::sql() const
 {
     return "<>";
 }
 
-bool NotEqualsOperator::needBracket() const
+bool not_equals_operator::need_bracket() const
 {
     return false;
 }
 
-} // namespace Operator
-} // namespace QueryCraft
+} // namespace operators
+} // namespace query_craft

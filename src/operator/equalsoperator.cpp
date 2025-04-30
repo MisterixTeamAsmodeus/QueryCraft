@@ -1,17 +1,17 @@
 #include "QueryCraft/operator/equalsoperator.h"
 
-namespace QueryCraft {
-namespace Operator {
+namespace query_craft {
+namespace operators {
 
-std::string EqualsOperator::sql() const
+std::string equals_operator::sql() const
 {
     return "=";
 }
 
-bool EqualsOperator::needBracket() const
+bool equals_operator::need_bracket() const
 {
     return false;
 }
 
-} // namespace Operator
-} // namespace QueryCraft
+} // namespace operators
+} // namespace query_craft

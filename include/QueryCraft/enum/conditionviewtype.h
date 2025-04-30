@@ -2,10 +2,10 @@
 
 #include <cstdint>
 
-namespace QueryCraft {
+namespace query_craft {
 
 /// @brief Перечисление для определения вида отображения названия колонки.
-enum class CondionViewType : uint8_t
+enum class condion_view_type : uint8_t
 {
     /// Представление по имени.
     NAME,
@@ -15,4 +15,4 @@ enum class CondionViewType : uint8_t
     FULL_NAME
 };
 
-} // namespace QueryCraft
+} // namespace query_craft

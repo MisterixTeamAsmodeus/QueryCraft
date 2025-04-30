@@ -1,17 +1,17 @@
 #include "QueryCraft/operator/lessoperator.h"
 
-namespace QueryCraft {
-namespace Operator {
+namespace query_craft {
+namespace operators {
 
-std::string LessOperator::sql() const
+std::string less_operator::sql() const
 {
     return "<";
 }
 
-bool LessOperator::needBracket() const
+bool less_operator::need_bracket() const
 {
     return false;
 }
 
-} // namespace Operator
-} // namespace QueryCraft
+} // namespace operators
+} // namespace query_craft

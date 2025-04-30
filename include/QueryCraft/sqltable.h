@@ -5,19 +5,19 @@
 #include "sortcolumn.h"
 #include "table.h"
 
-namespace QueryCraft {
+namespace query_craft {
 
 /// Класс, представляющий таблицу SQL.
 /// Расширяет класс Table и добавляет функциональность для генерации sql запросов.
-class SqlTable : public Table
+class sql_table : public table
 {
 public:
     /// Тип, представляющий строку таблицы.
     /// Каждая строка представляется в виде вектора значений столбцов.
-    using Row = std::vector<std::string>;
+    using row = std::vector<std::string>;
 
 public:
-    SqlTable() = default;
+    sql_table() = default;
 
     /**
      * Конструктор с указанием имени таблицы и схемы.
@@ -27,18 +27,18 @@ public:
      * @param columns    Список столбцов таблицы. По умолчанию пустой список.
      */
 
-    explicit SqlTable(std::string table_name, std::string scheme = "", const std::initializer_list<ColumnInfo>& columns = {});
+    explicit sql_table(std::string table_name, std::string scheme = "", const std::initializer_list<column_info>& columns = {});
 
     /**
      * Конструктор с указанием имени таблицы, схемы и переменного числа столбцов.
      *
-     * @param tableName Имя таблицы.
+     * @param table_name Имя таблицы.
      * @param scheme    Имя схемы.
      * @param columns   Столбцы таблицы.
      */
     template<typename... Args>
-    explicit SqlTable(std::string tableName, std::string scheme, Args&&... columns)
-        : Table(std::move(tableName),
+    explicit sql_table(std::string table_name, std::string scheme, Args&&... columns)
+        : table(std::move(table_name),
               std::move(scheme),
               std::forward<Args>(columns)...)
     {
@@ -47,31 +47,31 @@ public:
     /**
      * Конструктор с указанием имени таблицы, схемы и диапазона итераторов столбцов.
      *
-     * @param tableName Имя таблицы.
+     * @param table_name Имя таблицы.
      * @param scheme    Имя схемы.
-     * @param startIt   Итератор начала диапазона столбцов.
-     * @param endIt     Итератор конца диапазона столбцов.
+     * @param start_it   Итератор начала диапазона столбцов.
+     * @param end_it     Итератор конца диапазона столбцов.
      */
     template<class StartColumnIt, class EndColumnIt>
-    explicit SqlTable(std::string tableName, std::string scheme, StartColumnIt&& startIt, EndColumnIt&& endIt)
-        : SqlTable(std::move(tableName),
+    explicit sql_table(std::string table_name, std::string scheme, StartColumnIt&& start_it, EndColumnIt&& end_it)
+        : sql_table(std::move(table_name),
               std::move(scheme),
-              std::forward<StartColumnIt>(startIt),
-              std::forward<EndColumnIt>(endIt))
+              std::forward<StartColumnIt>(start_it),
+              std::forward<EndColumnIt>(end_it))
     {
     }
 
-    explicit SqlTable(const Table& other);
+    explicit sql_table(const table& other);
 
-    explicit SqlTable(Table&& other);
+    explicit sql_table(table&& other);
 
-    SqlTable(const SqlTable& other) = default;
+    sql_table(const sql_table& other) = default;
 
-    SqlTable(SqlTable&& other) noexcept = default;
+    sql_table(sql_table&& other) noexcept = default;
 
-    SqlTable& operator=(const SqlTable& other) = default;
+    sql_table& operator=(const sql_table& other) = default;
 
-    SqlTable& operator=(SqlTable&& other) noexcept = default;
+    sql_table& operator=(sql_table&& other) noexcept = default;
 
     /**
      * Добавление строки в таблицу.
@@ -79,7 +79,7 @@ public:
      * @param row Строка для добавления.
      * @return Ссылка на текущую таблицу.
      */
-    SqlTable& addRow(const Row& row);
+    sql_table& add_row(const row& row);
 
     /**
      * Добавление строки в таблицу с использованием переменного числа аргументов.
@@ -90,14 +90,14 @@ public:
      * для изменения поведения нужно переопределить метод для своего типа
      */
     template<typename... Args>
-    SqlTable& addRowArgs(Args&&... args)
+    sql_table& add_row_args(Args&&... args)
     {
         auto values = std::make_tuple<Args...>(std::forward<Args>(args)...);
 
-        Row row;
+        row row;
 
-        Helper::for_each(values, [&row](auto&& value) {
-            row.emplace_back(Helper::convertToString(value));
+        helper::for_each(values, [&row](auto&& value) {
+            row.emplace_back(helper::convert_to_string(value));
         });
 
         if(!rows.empty() && rows.begin()->size() != row.size())
@@ -115,7 +115,7 @@ public:
      * @note Очищает добавленные строки
      * @note Перегрузка для передачи параметров через initializer_list, так как бывают ситуации когда он не может не явно кастануть к vector
      */
-    std::string insertRowArgsSql(const std::initializer_list<ColumnInfo>& columns);
+    std::string insert_args(const std::initializer_list<column_info>& columns);
 
     /**
      * Генерация SQL-запроса для вставки строки в таблицу.
@@ -124,7 +124,7 @@ public:
      * @return SQL-запрос для вставки.
      * @note Очищает добавленные строки
      */
-    std::string insertRowSql(const std::vector<ColumnInfo>& columns = {});
+    std::string insert_sql(const std::vector<column_info>& columns = {});
 
     /**
      * Генерация SQL-запроса для обновления строки в таблице.
@@ -135,7 +135,7 @@ public:
      * @note Очищает добавленные строки
      * @note Перегрузка для передачи параметров через initializer_list, так как бывают ситуации когда он не может не явно кастануть к vector
      */
-    std::string updateRowArgsSql(const ConditionGroup& condition = {}, const std::initializer_list<ColumnInfo>& columns = {});
+    std::string update_args_sql(const condition_group& condition = {}, const std::initializer_list<column_info>& columns = {});
 
     /**
      * Генерация SQL-запроса для обновления строки в таблице.
@@ -145,7 +145,7 @@ public:
      * @return SQL-запрос для обновления.
      * @note Очищает добавленные строки
      */
-    std::string updateRowSql(const ConditionGroup& condition = {}, const std::vector<ColumnInfo>& columns = {});
+    std::string update_sql(const condition_group& condition = {}, const std::vector<column_info>& columns = {});
 
     /**
      * Генерация SQL-запроса для удаления строки из таблицы.
@@ -153,51 +153,51 @@ public:
      * @param condition Условие для выбора строки.
      * @return SQL-запрос для удаления.
      */
-    std::string removeRowSql(const ConditionGroup& condition = {}) const;
+    std::string remove_sql(const condition_group& condition = {}) const;
 
     /**
      * Генерация SQL-запроса для выборки строк из таблицы.
      *
-     * @param joinColumns   Информация о join соединениях
+     * @param join_columns   Информация о join соединениях
      * @param condition     Условие для выбора строк.
-     * @param sortColumns   Информация о колонках необходимых для сортировок
+     * @param sort_columns   Информация о колонках необходимых для сортировок
      * @param limit         Лимит выборки.
      * @param offset        Смещение выборки.
      * @param columns       Столбцы для выборки. По умолчанию все столбцы.
      * @return SQL-запрос для выборки.
      * @note Перегрузка для передачи параметров через initializer_list, так как бывают ситуации когда он не может не явно кастануть к vector
      */
-    std::string selectRowsArgsSql(
-        const std::initializer_list<JoinColumn>& joinColumns = {},
-        const ConditionGroup& condition = {},
-        const std::initializer_list<SortColumn>& sortColumns = {},
+    std::string select_args_sql(
+        const std::initializer_list<join_column>& join_columns = {},
+        const condition_group& condition = {},
+        const std::initializer_list<sort_column>& sort_columns = {},
         size_t limit = 0,
         size_t offset = 0,
-        const std::initializer_list<ColumnInfo>& columns = {}) const;
+        const std::initializer_list<column_info>& columns = {}) const;
 
     /**
      * Генерация SQL-запроса для выборки строк из таблицы.
      *
-     * @param joinColumns   Информация о join соединениях
+     * @param join_columns   Информация о join соединениях
      * @param condition     Условие для выбора строк.
-     * @param sortColumns   Информация о колонках необходимых для сортировок
+     * @param sort_columns   Информация о колонках необходимых для сортировок
      * @param limit         Лимит выборки.
      * @param offset        Смещение выборки.
      * @param columns       Столбцы для выборки. По умолчанию все столбцы.
      * @return SQL-запрос для выборки.
      */
-    std::string selectRowsSql(
-        const std::vector<JoinColumn>& joinColumns = {},
-        const ConditionGroup& condition = {},
-        const std::vector<SortColumn>& sortColumns = {},
+    std::string select_sql(
+        const std::vector<join_column>& join_columns = {},
+        const condition_group& condition = {},
+        const std::vector<sort_column>& sort_columns = {},
         size_t limit = 0,
         size_t offset = 0,
-        const std::vector<ColumnInfo>& columns = {}) const;
+        const std::vector<column_info>& columns = {}) const;
 
 private:
     /// Вектор, содержащий строки таблицы.
     /// Каждая строка представляется в виде вектора значений столбцов.
-    std::vector<Row> rows;
+    std::vector<row> rows;
 };
 
-} // namespace QueryCraft
+} // namespace query_craft

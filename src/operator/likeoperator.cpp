@@ -1,17 +1,17 @@
 #include "QueryCraft/operator/likeoperator.h"
 
-namespace QueryCraft {
-namespace Operator {
+namespace query_craft {
+namespace operators {
 
-std::string LikeOperator::sql() const
+std::string like_operator::sql() const
 {
     return "LIKE";
 }
 
-bool LikeOperator::needBracket() const
+bool like_operator::need_bracket() const
 {
     return false;
 }
 
-} // namespace Operator
-} // namespace QueryCraft
+} // namespace operators
+} // namespace query_craft

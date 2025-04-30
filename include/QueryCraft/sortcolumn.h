@@ -1,28 +1,29 @@
 #pragma once
 
 #include "conditiongroup.h"
+
 #include <cstdint>
 
-namespace QueryCraft {
+namespace query_craft {
 
-struct SortColumn
+struct sort_column
 {
     /**
      * @brief Типы сортировки в SQL-запросах.
      */
-    enum class Type : uint8_t
+    enum class type : uint8_t
     {
         /// Сортировка в порядке возрастания (ASC).
-        ASC,
+        asc,
 
         /// Сортировка в порядке убывания (DESC).
-        DESC
+        desc
     };
 
-    ColumnInfo column {};
-    Type sortType = Type::ASC;
+    column_info column {};
+    type sort_type = type::asc;
 };
 
-inline SortColumn randomSort();
+inline sort_column random_sort();
 
-} // namespace QueryCraft
+} // namespace query_craft

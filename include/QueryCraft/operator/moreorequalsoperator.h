@@ -2,19 +2,19 @@
 
 #include "ioperator.h"
 
-namespace QueryCraft {
-namespace Operator {
+namespace query_craft {
+namespace operators {
 
 /// Класс, представляющий оператор ">="
-class MoreOrEqualsOperator final : public IOperator
+class more_or_equals_operator final : public IOperator
 {
 public:
-    ~MoreOrEqualsOperator() override = default;
+    ~more_or_equals_operator() override = default;
 
     std::string sql() const override;
 
-    bool needBracket() const override;
+    bool need_bracket() const override;
 };
 
-} // namespace Operator
-} // namespace QueryCraft
+} // namespace operators
+} // namespace query_craft

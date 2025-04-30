@@ -2,19 +2,25 @@
 
 #include <iostream>
 
+/// Данный пример демонстрирует работу генерации запроса для удаления строк из таблицы
+
 int main()
 {
-    using namespace QueryCraft;
+    using namespace query_craft;
 
-    const SqlTable table("table_name", "schema_name",
-        ColumnInfo("c1"),
-        ColumnInfo("c2"),
-        ColumnInfo("c3"));
+    // Объявление информации о таблице
+    const sql_table table("table_name", "schema_name",
+        column_info("c1"),
+        column_info("c2"),
+        column_info("c3"));
 
-    std::cout << table.removeRowSql(table.column("c1") > 5
+    // Вывод сгенерированного запроса с указанием условия удаления
+    std::cout << table.remove_sql(
+        table.column("c1") > 5
         && table.column("c2") < 7)
               << "\n";
-    std::cout << table.removeRowSql() << "\n";
+    // Вывод сгенерированного запроса для удаления всех записей
+    std::cout << table.remove_sql() << "\n";
 
     return 0;
 }

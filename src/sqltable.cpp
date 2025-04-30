@@ -1,40 +1,40 @@
 #include "QueryCraft/sqltable.h"
 
 namespace {
-void insert_with_escaping_character(std::stringstream& sqlStream, const std::string& value)
+void insert_with_escaping_character(std::stringstream& sql_stream, const std::string& value)
 {
-    if(value != QueryCraft::ColumnInfo::nullValue()) {
-        sqlStream << "'";
+    if(value != query_craft::column_info::null_value()) {
+        sql_stream << "'";
     }
 
-    sqlStream << value;
+    sql_stream << value;
 
-    if(value != QueryCraft::ColumnInfo::nullValue()) {
-        sqlStream << "'";
+    if(value != query_craft::column_info::null_value()) {
+        sql_stream << "'";
     }
 }
 } // namespace
 
-namespace QueryCraft {
+namespace query_craft {
 
-SqlTable::SqlTable(std::string table_name, std::string scheme,
-    const std::initializer_list<ColumnInfo>& columns)
-    : Table(std::move(table_name),
+sql_table::sql_table(std::string table_name, std::string scheme,
+    const std::initializer_list<column_info>& columns)
+    : table(std::move(table_name),
           std::move(scheme), columns)
 {
 }
 
-SqlTable::SqlTable(const Table& other)
-    : Table(other)
+sql_table::sql_table(const table& other)
+    : table(other)
 {
 }
 
-SqlTable::SqlTable(Table&& other)
-    : Table(other)
+sql_table::sql_table(table&& other)
+    : table(other)
 {
 }
 
-SqlTable& SqlTable::addRow(const Row& row)
+sql_table& sql_table::add_row(const row& row)
 {
     if(row.empty())
         throw std::logic_error("Ошибка. Попытка добавить пустую строку");
@@ -46,197 +46,197 @@ SqlTable& SqlTable::addRow(const Row& row)
     return *this;
 }
 
-std::string SqlTable::insertRowArgsSql(const std::initializer_list<ColumnInfo>& columns)
+std::string sql_table::insert_args(const std::initializer_list<column_info>& columns)
 {
-    return insertRowSql(std::vector<ColumnInfo>(columns));
+    return insert_sql(std::vector<column_info>(columns));
 }
 
-std::string SqlTable::insertRowSql(const std::vector<ColumnInfo>& columns)
+std::string sql_table::insert_sql(const std::vector<column_info>& columns)
 {
-    const auto insertColumns = columns.empty() ? _columns : columns;
+    const auto insert_columns = columns.empty() ? _columns : columns;
 
-    if(insertColumns.empty())
+    if(insert_columns.empty())
         throw std::invalid_argument("Ошибка. Отсутствует информация о колонках");
 
     if(rows.empty())
         throw std::invalid_argument("Ошибка. Отсутвуют строки для всатвки");
 
-    if(rows.front().size() != insertColumns.size())
+    if(rows.front().size() != insert_columns.size())
         throw std::invalid_argument("Ошибка. Не совпадает колличество колонок с размером данных");
 
-    std::stringstream sqlStream;
-    sqlStream << "INSERT INTO " << tableName() << " (";
+    std::stringstream sql_stream;
+    sql_stream << "INSERT INTO " << table_name() << " (";
 
-    for(const auto& column : insertColumns) {
-        sqlStream << "\"" << column.name() << "\""
-                  << ", ";
+    for(const auto& column : insert_columns) {
+        sql_stream << "\"" << column.name() << "\""
+                   << ", ";
     }
 
-    sqlStream.seekp(-2, std::stringstream::cur);
+    sql_stream.seekp(-2, std::stringstream::cur);
 
-    sqlStream << ") VALUES";
+    sql_stream << ") VALUES";
 
     for(const auto& row : rows) {
-        sqlStream << " (";
+        sql_stream << " (";
 
         for(const auto& value : row) {
-            insert_with_escaping_character(sqlStream, value);
-            sqlStream << ", ";
+            insert_with_escaping_character(sql_stream, value);
+            sql_stream << ", ";
         }
 
-        sqlStream.seekp(-2, std::stringstream::cur);
+        sql_stream.seekp(-2, std::stringstream::cur);
 
-        sqlStream << "),";
+        sql_stream << "),";
     }
 
-    sqlStream.seekp(-1, std::stringstream::cur);
+    sql_stream.seekp(-1, std::stringstream::cur);
 
-    sqlStream << ";";
+    sql_stream << ";";
 
     rows.clear();
 
-    return sqlStream.str();
+    return sql_stream.str();
 }
 
-std::string SqlTable::updateRowArgsSql(const ConditionGroup& condition, const std::initializer_list<ColumnInfo>& columns)
+std::string sql_table::update_args_sql(const condition_group& condition, const std::initializer_list<column_info>& columns)
 {
-    return updateRowSql(condition, std::vector<ColumnInfo>(columns));
+    return update_sql(condition, std::vector<column_info>(columns));
 }
 
-std::string SqlTable::updateRowSql(const ConditionGroup& condition, const std::vector<ColumnInfo>& columns)
+std::string sql_table::update_sql(const condition_group& condition, const std::vector<column_info>& columns)
 {
-    const auto updateColumns = columns.empty() ? _columns : columns;
+    const auto update_columns = columns.empty() ? _columns : columns;
 
-    if(updateColumns.empty())
+    if(update_columns.empty())
         throw std::invalid_argument("Ошибка. Отсутствует информация о колонках");
 
     if(rows.empty())
         throw std::invalid_argument("Ошибка. Отсутвуют строки для всатвки");
 
-    if(rows.front().size() != updateColumns.size())
+    if(rows.front().size() != update_columns.size())
         throw std::invalid_argument("Ошибка. Не совпадает колличество колонок с размером данных");
 
     if(rows.size() != 1)
         throw std::invalid_argument("Ошибка. В рамках запроса update можно обновить использовать только 1 строку");
 
-    std::stringstream sqlStream;
+    std::stringstream sql_stream;
 
-    sqlStream << "UPDATE " << tableName() << " SET ";
+    sql_stream << "UPDATE " << table_name() << " SET ";
 
     const auto& row = rows.front();
-    for(int i = 0; i < updateColumns.size(); i++) {
-        sqlStream << "\"" << updateColumns[i].name() << "\""
-                  << " = ";
+    for(int i = 0; i < update_columns.size(); i++) {
+        sql_stream << "\"" << update_columns[i].name() << "\""
+                   << " = ";
 
-        insert_with_escaping_character(sqlStream, row[i]);
+        insert_with_escaping_character(sql_stream, row[i]);
 
-        sqlStream << ", ";
+        sql_stream << ", ";
     }
 
-    sqlStream.seekp(-2, std::stringstream::cur);
+    sql_stream.seekp(-2, std::stringstream::cur);
 
-    if(condition.isValid())
-        sqlStream << " WHERE " << condition.unwrap();
+    if(condition.is_valid())
+        sql_stream << " WHERE " << condition.unwrap();
 
-    sqlStream << ";";
+    sql_stream << ";";
 
     rows.clear();
 
-    return sqlStream.str();
+    return sql_stream.str();
 }
 
-std::string SqlTable::removeRowSql(const ConditionGroup& condition) const
+std::string sql_table::remove_sql(const condition_group& condition) const
 {
-    std::stringstream sqlStream;
+    std::stringstream sql_stream;
 
-    sqlStream << "DELETE FROM " << tableName();
+    sql_stream << "DELETE FROM " << table_name();
 
-    if(condition.isValid())
-        sqlStream << " WHERE " << condition.unwrap();
+    if(condition.is_valid())
+        sql_stream << " WHERE " << condition.unwrap();
 
-    sqlStream << ";";
+    sql_stream << ";";
 
-    return sqlStream.str();
+    return sql_stream.str();
 }
 
-std::string SqlTable::selectRowsArgsSql(
-    const std::initializer_list<JoinColumn>& joinColumns,
-    const ConditionGroup& condition,
-    const std::initializer_list<SortColumn>& sortColumns,
+std::string sql_table::select_args_sql(
+    const std::initializer_list<join_column>& join_columns,
+    const condition_group& condition,
+    const std::initializer_list<sort_column>& sort_columns,
     const size_t limit,
     const size_t offset,
-    const std::initializer_list<ColumnInfo>& columns) const
+    const std::initializer_list<column_info>& columns) const
 {
-    return selectRowsSql(
-        std::vector<JoinColumn>(joinColumns),
+    return select_sql(
+        std::vector<join_column>(join_columns),
         condition,
-        std::vector<SortColumn>(sortColumns),
+        std::vector<sort_column>(sort_columns),
         limit,
         offset,
-        std::vector<ColumnInfo>(columns));
+        std::vector<column_info>(columns));
 }
 
-std::string SqlTable::selectRowsSql(
-    const std::vector<JoinColumn>& joinColumns,
-    const ConditionGroup& condition,
-    const std::vector<SortColumn>& sortColumns,
+std::string sql_table::select_sql(
+    const std::vector<join_column>& join_columns,
+    const condition_group& condition,
+    const std::vector<sort_column>& sort_columns,
     const size_t limit,
     const size_t offset,
-    const std::vector<ColumnInfo>& columns) const
+    const std::vector<column_info>& columns) const
 {
     // TODO Добавить реализацию group by, having
 
-    const auto selectColumns = columns.empty() ? _columns : columns;
+    const auto select_columns = columns.empty() ? _columns : columns;
 
-    std::stringstream sqlStream;
+    std::stringstream sql_stream;
 
-    sqlStream << "SELECT ";
+    sql_stream << "SELECT ";
 
-    if(!selectColumns.empty()) {
-        for(const ColumnInfo& column : selectColumns) {
-            sqlStream << column.fullName() << " AS " << column.alias() << ", ";
+    if(!select_columns.empty()) {
+        for(const column_info& column : select_columns) {
+            sql_stream << column.full_name() << " AS " << column.alias() << ", ";
         }
-        sqlStream.seekp(-2, std::stringstream::cur);
+        sql_stream.seekp(-2, std::stringstream::cur);
     } else {
-        sqlStream << "*";
+        sql_stream << "*";
     }
 
-    sqlStream << " FROM " << tableName();
+    sql_stream << " FROM " << table_name();
 
-    for(const auto& joinColumn : joinColumns) {
-        sqlStream << joinColumn << " ";
+    for(const auto& joinColumn : join_columns) {
+        sql_stream << joinColumn << " ";
     }
-    if(condition.isValid())
-        sqlStream << " WHERE " << condition.unwrap(CondionViewType::FULL_NAME);
+    if(condition.is_valid())
+        sql_stream << " WHERE " << condition.unwrap(condion_view_type::FULL_NAME);
 
-    if(!sortColumns.empty()) {
-        sqlStream << " ORDER BY ";
+    if(!sort_columns.empty()) {
+        sql_stream << " ORDER BY ";
 
-        for(const auto& sortColumn : sortColumns) {
-            sqlStream << sortColumn.column.alias();
+        for(const auto& sortColumn : sort_columns) {
+            sql_stream << sortColumn.column.alias();
 
-            switch(sortColumn.sortType) {
-                case SortColumn::Type::ASC:
-                    sqlStream << " ASC, ";
+            switch(sortColumn.sort_type) {
+                case sort_column::type::asc:
+                    sql_stream << " ASC, ";
                     break;
-                case SortColumn::Type::DESC:
-                    sqlStream << " DESC, ";
+                case sort_column::type::desc:
+                    sql_stream << " DESC, ";
                     break;
             }
         }
 
-        sqlStream.seekp(-2, std::stringstream::cur);
+        sql_stream.seekp(-2, std::stringstream::cur);
     }
 
     if(limit != 0)
-        sqlStream << " LIMIT " << limit;
+        sql_stream << " LIMIT " << limit;
 
     if(offset != 0)
-        sqlStream << " OFFSET " << offset;
+        sql_stream << " OFFSET " << offset;
 
-    sqlStream << ";";
+    sql_stream << ";";
 
-    return sqlStream.str();
+    return sql_stream.str();
 }
 
-} // namespace QueryCraft
+} // namespace query_craft

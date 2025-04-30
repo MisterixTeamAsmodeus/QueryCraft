@@ -2,22 +2,22 @@
 
 #include <cstdint>
 
-namespace QueryCraft {
+namespace query_craft {
 
 /**
  * @brief Перечисление логических операторов.
  */
-enum class LogicalOperator : uint8_t
+enum class logical_operator : uint8_t
 {
     /**
      * Логический оператор "И".
      */
-    AND,
+    and,
 
     /**
      * Логический оператор "ИЛИ".
      */
-    OR
+    or
 };
 
-} // namespace QueryCraft
+} // namespace query_craft

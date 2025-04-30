@@ -18,59 +18,59 @@
 #include <tuple>
 #include <vector>
 
-namespace QueryCraft {
+namespace query_craft {
 
-/// Структура ConditionGroup предоставляет возможность создания сложных условий с использованием логических операторов
+/// Структура condition_group предоставляет возможность создания сложных условий с использованием логических операторов
 /// (И, ИЛИ) и поддерживает создание условий для столбцов таблицы.
-struct ConditionGroup
+struct condition_group
 {
     /// Cтруктура представляющая отдельное условие.
-    struct Condition
+    struct condition
     {
         /// Определяет структуру для хранения информации о столбце таблицы.
-        struct Column
+        struct column
         {
 
             /**
              * @brief Перечисление настроек столбца в базе данных.
              */
-            enum class Settings : uint8_t
+            enum class settings : uint8_t
             {
                 /**
                  * Нет настроек.
                  */
-                NONE = 0,
+                none = 0,
 
                 /**
                  * Столбец является первичным ключом.
                  */
-                PRIMARY_KEY = 1 << 0,
+                primary_key = 1 << 0,
 
-                NOT_NULL = 1 << 1,
+                not_null = 1 << 1,
             };
 
             /**
              * Возвращает константу, представляющую пустое значение для столбца.
              * @return Строка "NULL".
              */
-            constexpr static auto nullValue() { return "NULL"; }
+            constexpr static char* null_value();
 
-            Column() = default;
+            column() = default;
 
             /**
              * Конструктор с одним параметром. Инициализирует столбец с указанным именем и настройками по умолчанию.
              * @param name Имя столбца.
              * @param settings Настройки столбца.
              */
-            explicit Column(std::string name, Settings settings = Settings::NONE);
+            explicit column(std::string name, settings settings = settings::none);
 
-            Column(const Column& other) = default;
+            column(const column& other) = default;
 
-            Column(Column&& other) noexcept = default;
+            column(column&& other) noexcept = default;
 
-            bool operator==(const Column& rhs) const;
+            bool operator==(const column& rhs) const;
 
-            bool operator!=(const Column& rhs) const;
+            bool operator!=(const column& rhs) const;
 
             /**
              * Возвращает имя столбца.
@@ -82,13 +82,13 @@ struct ConditionGroup
              * Возвращает полное имя столбца.
              * @return Полное имя столбца.
              */
-            std::string fullName() const;
+            std::string full_name() const;
 
             /**
              * Устанавливает полное имя столбца.
              * @param fullName Полное имя столбца.
              */
-            void setFullName(const std::string& fullName);
+            void set_full_name(const std::string& fullName);
 
             /**
              * Возвращает псевдоним столбца.
@@ -100,38 +100,38 @@ struct ConditionGroup
              * Устанавливает псевдоним столбца.
              * @param alias Псевдоним столбца.
              */
-            void setAlias(const std::string& alias);
+            void set_alias(const std::string& alias);
 
             /**
              * Добавляет настройку к столбцу.
              * @param settings Настройка, которую нужно добавить.
              */
-            void addSettings(Settings settings);
+            void add_settings(settings settings);
 
             /**
              * Проверяет, имеет ли столбец указанную настройку.
              * @param settings Настройка, которую нужно проверить.
              * @return true, если столбец имеет указанную настройку, иначе false.
              */
-            bool hasSettings(Settings settings) const;
+            bool has_settings(settings settings) const;
 
-            Column& operator=(const Column& other) = default;
+            column& operator=(const column& other) = default;
 
-            Column& operator=(Column&& other) noexcept = default;
+            column& operator=(column&& other) noexcept = default;
 
             /**
              * Возвращает условие, проверяющее, является ли значение столбца пустым.
              * @return Условие, проверяющее, является ли значение столбца пустым.
              */
-            Condition isNull() const;
+            condition is_null() const;
 
             /**
              * Возвращает условие, проверяющее, является ли значение столбца не пустым.
              * @return Условие, проверяющее, является ли значение столбца не пустым.
              */
-            Condition notNull() const;
+            condition not_null() const;
 
-            Condition like(const std::string& pattern) const;
+            condition like(const std::string& pattern) const;
 
             /**
              * Возвращает условие, проверяющее, принадлежит ли значение столбца к указанным значениям.
@@ -140,33 +140,33 @@ struct ConditionGroup
              * @return Условие, проверяющее, принадлежит ли значение столбца к указанным значениям.
              */
             template<typename... Args>
-            Condition in(Args&&... args) const
+            condition in(Args&&... args) const
             {
                 std::vector<std::string> values;
                 for(const auto& arg : { std::forward<Args>(args)... })
-                    values.emplace_back(Helper::convertToString(arg));
+                    values.emplace_back(helper::convert_to_string(arg));
 
-                return createCondition(std::make_shared<Operator::InOperator>(), std::move(values));
+                return create_condition(std::make_shared<operators::in_operator>(), std::move(values));
             }
 
             /**
              * Возвращает условие, проверяющее, принадлежит ли значение столбца к значениям, содержащимся в указанном диапазоне.
              * @tparam StartIt Тип итератора начала диапазона.
              * @tparam EndIt Тип итератора конца диапазона.
-             * @param startIt Итератор начала диапазона.
-             * @param endIt Итератор конца диапазона.
+             * @param start_it Итератор начала диапазона.
+             * @param end_it Итератор конца диапазона.
              * @return Условие, проверяющее, принадлежит ли значение столбца к значениям, содержащимся в указанном диапазоне.
              */
             template<class StartIt, class EndIt>
-            Condition inList(StartIt&& startIt, EndIt&& endIt) const
+            condition in_list(StartIt&& start_it, EndIt&& end_it) const
             {
                 std::vector<std::string> values;
 
-                std::for_each(startIt, endIt, [&values](const auto& arg) {
-                    values.emplace_back(Helper::convertToString(arg));
+                std::for_each(start_it, end_it, [&values](const auto& arg) {
+                    values.emplace_back(helper::convert_to_string(arg));
                 });
 
-                return createCondition(std::make_shared<Operator::InOperator>(), std::move(values));
+                return create_condition(std::make_shared<operators::in_operator>(), std::move(values));
             }
 
             /**
@@ -176,33 +176,33 @@ struct ConditionGroup
              * @return Условие, проверяющее, не принадлежит ли значение столбца к указанным значениям.
              */
             template<typename... Args>
-            Condition notIn(Args&&... args) const
+            condition notIn(Args&&... args) const
             {
                 std::vector<std::string> values;
                 for(const auto& arg : { std::forward<Args>(args)... })
-                    values.emplace_back(Helper::convertToString(arg));
+                    values.emplace_back(helper::convert_to_string(arg));
 
-                return createCondition(std::make_shared<Operator::NotInOperator>(), std::move(values));
+                return create_condition(std::make_shared<operators::not_in_operator>(), std::move(values));
             }
 
             /**
              * Возвращает условие, проверяющее, не принадлежит ли значение столбца к значениям, содержащимся в указанном диапазоне.
              * @tparam StartIt Тип итератора начала диапазона.
              * @tparam EndIt Тип итератора конца диапазона.
-             * @param startIt Итератор начала диапазона.
-             * @param endIt Итератор конца диапазона.
+             * @param start_it Итератор начала диапазона.
+             * @param end_it Итератор конца диапазона.
              * @return Условие, проверяющее, не принадлежит ли значение столбца к значениям, содержащимся в указанном диапазоне.
              */
             template<class StartIt, class EndIt>
-            Condition notInList(StartIt&& startIt, EndIt&& endIt) const
+            condition not_in_list(StartIt&& start_it, EndIt&& end_it) const
             {
                 std::vector<std::string> values;
 
-                std::for_each(startIt, endIt, [&values](const auto& arg) {
-                    values.emplace_back(Helper::convertToString(arg));
+                std::for_each(start_it, end_it, [&values](const auto& arg) {
+                    values.emplace_back(helper::convert_to_string(arg));
                 });
 
-                return createCondition(std::make_shared<Operator::NotInOperator>(), std::move(values));
+                return create_condition(std::make_shared<operators::not_in_operator>(), std::move(values));
             }
 
             /**
@@ -212,9 +212,9 @@ struct ConditionGroup
              * @return Условие, проверяющее, равно ли значение столбца указанному значению.
              */
             template<typename T>
-            Condition operator==(const T& value) const
+            condition operator==(const T& value) const
             {
-                return createCondition(std::make_shared<Operator::EqualsOperator>(), { Helper::convertToString(value) });
+                return create_condition(std::make_shared<operators::equals_operator>(), { helper::convert_to_string(value) });
             }
 
             /**
@@ -224,7 +224,7 @@ struct ConditionGroup
              * @return Условие, проверяющее, равно ли значение столбца указанному значению.
              */
 
-            Condition equals(const Column& value) const;
+            condition equals(const column& value) const;
 
             /**
              * Возвращает условие, проверяющее, не равно ли значение столбца указанному значению.
@@ -233,9 +233,9 @@ struct ConditionGroup
              * @return Условие, проверяющее, не равно ли значение столбца указанному значению.
              */
             template<typename T>
-            Condition operator!=(const T& value) const
+            condition operator!=(const T& value) const
             {
-                return createCondition(std::make_shared<Operator::NotEqualsOperator>(), { Helper::convertToString(value) });
+                return create_condition(std::make_shared<operators::not_equals_operator>(), { helper::convert_to_string(value) });
             }
 
             /**
@@ -245,9 +245,9 @@ struct ConditionGroup
              * @return Условие, проверяющее, меньше ли значение столбца указанному значению.
              */
             template<typename T>
-            Condition operator<(const T& value) const
+            condition operator<(const T& value) const
             {
-                return createCondition(std::make_shared<Operator::LessOperator>(), { Helper::convertToString(value) });
+                return create_condition(std::make_shared<operators::less_operator>(), { helper::convert_to_string(value) });
             }
 
             /**
@@ -257,9 +257,9 @@ struct ConditionGroup
              * @return Условие, проверяющее, меньше или равно ли значение столбца указанному значению.
              */
             template<typename T>
-            Condition operator<=(const T& value) const
+            condition operator<=(const T& value) const
             {
-                return createCondition(std::make_shared<Operator::LessOrEqualsOperator>(), { Helper::convertToString(value) });
+                return create_condition(std::make_shared<operators::less_or_equals_operator>(), { helper::convert_to_string(value) });
             }
 
             /**
@@ -269,9 +269,9 @@ struct ConditionGroup
              * @return Условие, проверяющее, больше ли значение столбца указанному значению.
              */
             template<typename T>
-            Condition operator>(const T& value) const
+            condition operator>(const T& value) const
             {
-                return createCondition(std::make_shared<Operator::MoreOperator>(), { Helper::convertToString(value) });
+                return create_condition(std::make_shared<operators::more_operator>(), { helper::convert_to_string(value) });
             }
 
             /**
@@ -281,16 +281,16 @@ struct ConditionGroup
              * @return Условие, проверяющее, больше или равно ли значение столбца указанному значению.
              */
             template<typename T>
-            Condition operator>=(const T& value) const
+            condition operator>=(const T& value) const
             {
-                return createCondition(std::make_shared<Operator::MoreOrEqualsOperator>(), { Helper::convertToString(value) });
+                return create_condition(std::make_shared<operators::more_or_equals_operator>(), { helper::convert_to_string(value) });
             }
 
             /**
              * Проверяет, является ли условие валидным.
              * @return true, если была создана колонка, иначе false.
              */
-            bool isValid() const;
+            bool is_valid() const;
 
         private:
             /**
@@ -299,20 +299,20 @@ struct ConditionGroup
              * @param values Значения, которые будут использованы в условии.
              * @return Объект условия.
              */
-            Condition createCondition(std::shared_ptr<Operator::IOperator>&& conditionOperator, std::vector<std::string>&& values, bool need_forging = true) const;
+            condition create_condition(std::shared_ptr<operators::IOperator>&& conditionOperator, std::vector<std::string>&& values, bool need_forging = true) const;
 
         private:
             /// Имя столбца.
-            std::string _name;
+            std::string _name {};
 
             /// Полное имя столбца.
-            std::string _fullName;
+            std::string _fullName {};
 
             /// Псевдоним столбца.
-            std::string _alias;
+            std::string _alias {};
 
             /// Настройки столбца.
-            Settings _columnSettings = Settings::NONE;
+            settings _columnSettings = settings::none;
         };
 
         /**
@@ -320,47 +320,47 @@ struct ConditionGroup
          * @param rhd Другое условие.
          * @return Объект ConditionGroup, представляющий объединенное условие.
          */
-        ConditionGroup operator&&(const Condition& rhd) const;
+        condition_group operator&&(const condition& rhd) const;
 
         /**
          * Оператор логического "И" для объединения текущего условия с другим условием.
          * @param rhd Другое условие.
          * @return Объект ConditionGroup, представляющий объединенное условие.
          */
-        ConditionGroup operator&&(const ConditionGroup& rhd) const;
+        condition_group operator&&(const condition_group& rhd) const;
 
         /**
          * Оператор логического "ИЛИ" для объединения текущего условия с другим условием.
          * @param rhd Другое условие.
          * @return Объект ConditionGroup, представляющий объединенное условие.
          */
-        ConditionGroup operator||(const Condition& rhd) const;
+        condition_group operator||(const condition& rhd) const;
 
         /**
          * Оператор логического "ИЛИ" для объединения текущего условия с другим условием.
          * @param rhd Другое условие.
          * @return Объект ConditionGroup, представляющий объединенное условие.
          */
-        ConditionGroup operator||(const ConditionGroup& rhd) const;
+        condition_group operator||(const condition_group& rhd) const;
 
         /**
          * Возвращает строковое представление текущего условия.
-         * @param viewType Настройки для отображения названия колонки.
+         * @param view_type Настройки для отображения названия колонки.
          * @return Строковое представление текущего условия.
          */
-        std::string unwrap(CondionViewType viewType = CondionViewType::NAME) const;
+        std::string unwrap(condion_view_type view_type = condion_view_type::NAME) const;
 
         /**
          * Возвращает информацию о столбце текущего условия.
          * @return Объект ColumnInfo, содержащий информацию о столбце.
          */
-        Column column() const;
+        column condition_column() const;
 
         /**
          * Возвращает указатель на интерфейс оператора условия текущего условия.
          * @return Указатель на интерфейс оператора условия.
          */
-        std::shared_ptr<Operator::IOperator> conditionOperator() const;
+        std::shared_ptr<operators::IOperator> condition_operator() const;
 
         /**
          * Возвращает значения текущего условия.
@@ -372,123 +372,113 @@ struct ConditionGroup
          * Проверяет, является ли текущее условие валидным.
          * @return true, если было создано условие, иначе false.
          */
-        bool isValid() const;
+        bool is_valid() const;
 
     private:
-        std::shared_ptr<Operator::IOperator> _conditionOperator {};
-        Column _column {};
+        std::shared_ptr<operators::IOperator> _condition_operator {};
+        column _column {};
         std::vector<std::string> _values {};
         bool _need_forging = true;
     };
 
-    ConditionGroup() = default;
+    condition_group() = default;
 
     /**
-     * Конструктор, который создает объект ConditionGroup на основе указанного условия.
+     * Конструктор, который создает объект condition_group на основе указанного условия.
      * @param condition Условие, которое будет использоваться для создания объекта ConditionGroup.
      */
-    ConditionGroup(const Condition& condition);
+    condition_group(const condition& condition);
 
-    ConditionGroup(const ConditionGroup& other) = default;
+    condition_group(const condition_group& other) = default;
 
-    ConditionGroup(ConditionGroup&& other) noexcept = default;
+    condition_group(condition_group&& other) noexcept = default;
 
-    ConditionGroup& operator=(const ConditionGroup& other) = default;
+    condition_group& operator=(const condition_group& other) = default;
 
-    ConditionGroup& operator=(ConditionGroup&& other) noexcept = default;
-
-    /**
-     * Оператор логического "И" для объединения текущего условия с другим условием.
-     * @param rhd Другое условие.
-     * @return Объект ConditionGroup, представляющий объединенное условие.
-     */
-    ConditionGroup operator&&(const ConditionGroup& rhd) const;
+    condition_group& operator=(condition_group&& other) noexcept = default;
 
     /**
      * Оператор логического "И" для объединения текущего условия с другим условием.
      * @param rhd Другое условие.
      * @return Объект ConditionGroup, представляющий объединенное условие.
      */
-    ConditionGroup operator&&(const Condition& rhd) const;
+    condition_group operator&&(const condition_group& rhd) const;
+
+    /**
+     * Оператор логического "И" для объединения текущего условия с другим условием.
+     * @param rhd Другое условие.
+     * @return Объект ConditionGroup, представляющий объединенное условие.
+     */
+    condition_group operator&&(const condition& rhd) const;
 
     /**
      * Оператор логического "ИЛИ" для объединения текущего условия с другим условием.
      * @param rhd Другое условие.
      * @return Объект ConditionGroup, представляющий объединенное условие.
      */
-    ConditionGroup operator||(const ConditionGroup& rhd) const;
+    condition_group operator||(const condition_group& rhd) const;
 
     /**
      * Оператор логического "ИЛИ" для объединения текущего условия с другим условием.
      * @param rhd Другое условие.
      * @return Объект ConditionGroup, представляющий объединенное условие.
      */
-    ConditionGroup operator||(const Condition& rhd) const;
+    condition_group operator||(const condition& rhd) const;
 
     /**
      * Возвращает строковое представление текущего условия.
-     * @param viewType Настройки для отображения названия колонки.
+     * @param view_type Настройки для отображения названия колонки.
      * @param compressed Сжать выходную строку, если это возможно.
      * @return Строковое представление текущего условия.
      */
-    std::string unwrap(CondionViewType viewType = CondionViewType::NAME, bool compressed = true) const;
+    std::string unwrap(condion_view_type view_type = condion_view_type::NAME, bool compressed = true) const;
 
     /**
      * Проверяет, является ли текущее условие валидным.
      * @return true, если было создано условие, иначе false.
      */
-    bool isValid() const;
+    bool is_valid() const;
 
 private:
     /**
      * Проверяет, является ли текущее условие листом (не содержит дочерних условий).
      * @return true, если текущее условие является листом, иначе false.
      */
-    bool isSheet() const;
+    bool is_sheet() const;
 
     /**
      * Рекурсивно обходит дерево условий и создает строковое представление.
      * @param node Указатель на текущее условие.
      * @param stream Строковый поток, куда будут добавляться условия.
-     * @param viewType Настройки для отображения названия колонки.
+     * @param view_type Настройки для отображения названия колонки.
      * @param compressed Сжать выходную строку.
      */
-    static void unwrapTree(const ConditionGroup* node, std::stringstream& stream, CondionViewType viewType, bool compressed);
+    static void unwrap_tree(const condition_group* node, std::stringstream& stream, condion_view_type view_type, bool compressed);
 
 private:
     /**
      * Поле, содержащее кортеж, который хранит логический оператор и условие.
      * Используется для построения дерева условий в группе условий.
      */
-    std::tuple<LogicalOperator, Condition> _node {};
+    std::tuple<logical_operator, condition> _node {};
 
     /**
      * Указатель на левое поддерево группы условий.
      * Используется для представления сложных условий с использованием логических операторов.
      */
-    std::shared_ptr<ConditionGroup> _left {};
+    std::shared_ptr<condition_group> _left {};
 
     /**
      * Указатель на правое поддерево группы условий.
      * Используется для представления сложных условий с использованием логических операторов.
      */
-    std::shared_ptr<ConditionGroup> _right {};
+    std::shared_ptr<condition_group> _right {};
 };
 
-using ColumnInfo = ConditionGroup::Condition::Column;
-using ConditionInfo = ConditionGroup::Condition;
+using column_info = condition_group::condition::column;
+using condition_info = condition_group::condition;
 
-using ColumnSettings = ConditionGroup::Condition::Column::Settings;
-
-/**
- * @brief Оператор "и" для перечисления ColumnInfo::Settings.
- *
- * @param a Первый операнд.
- * @param b Второй операнд.
- *
- * @return Результат операции "и" для двух перечислений ColumnInfo::Settings.
- */
-ColumnInfo::Settings operator&(ColumnInfo::Settings a, ColumnInfo::Settings b);
+using column_settings = condition_group::condition::column::settings;
 
 /**
  * @brief Оператор "и" для перечисления ColumnInfo::Settings.
@@ -498,10 +488,20 @@ ColumnInfo::Settings operator&(ColumnInfo::Settings a, ColumnInfo::Settings b);
  *
  * @return Результат операции "и" для двух перечислений ColumnInfo::Settings.
  */
-ColumnInfo::Settings operator|(ColumnInfo::Settings a, ColumnInfo::Settings b);
+column_settings operator&(column_settings a, column_settings b);
 
-ColumnSettings primary_key();
+/**
+ * @brief Оператор "и" для перечисления ColumnInfo::Settings.
+ *
+ * @param a Первый операнд.
+ * @param b Второй операнд.
+ *
+ * @return Результат операции "и" для двух перечислений ColumnInfo::Settings.
+ */
+column_settings operator|(column_settings a, column_settings b);
 
-ColumnSettings not_null();
+column_settings primary_key();
 
-} // namespace QueryCraft
+column_settings not_null();
+
+} // namespace query_craft

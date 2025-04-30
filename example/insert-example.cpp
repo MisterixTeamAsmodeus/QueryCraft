@@ -2,19 +2,26 @@
 
 #include <iostream>
 
+/// Данный пример демонстрирует работу генерации запроса для вставки строк в таблицу
+
 int main()
 {
-    using namespace QueryCraft;
+    using namespace query_craft;
 
-    SqlTable table("table_name", "schema_name",
-        ColumnInfo("c1"),
-        ColumnInfo("c2"),
-        ColumnInfo("c3"));
+    // Объявление информации о таблице
+    sql_table table("table_name", "schema_name",
+        column_info("c1"),
+        column_info("c2"),
+        column_info("c3"));
 
-    table.addRowArgs(5, "124", true);
-    table.addRowArgs(5, "874", true);
-    std::cout << table.insertRowSql() << "\n";
+    // Добавление строк для вставки
+    table.add_row_args(5, "124", true);
+    table.add_row_args(5, "874", true);
+    // Вывод сгенерированного запроса для вставки
+    std::cout << table.insert_sql() << "\n";
 
-    table.addRowArgs(5, true);
-    std::cout << table.insertRowSql({ table.column("c1"), table.column("c3") }) << "\n";
+    // Добавление строк для вставки c указанием колонок (пропущена колонка c2, она будет заполнена значением по умолчанию)
+    table.add_row({ "5", "true" });
+    // Вывод сгенерированного запроса с явным указанием колонок таблицы
+    std::cout << table.insert_sql({ table.column("c1"), table.column("c3") }) << "\n";
 }

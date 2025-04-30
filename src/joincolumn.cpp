@@ -1,31 +1,31 @@
 #include "QueryCraft/joincolumn.h"
 
-std::ostream& QueryCraft::operator<<(std::ostream& os, const JoinColumn& obj)
+std::ostream& query_craft::operator<<(std::ostream& os, const join_column& obj)
 {
-    switch(obj.joinType) {
-        case JoinColumn::Type::INNER: {
+    switch(obj.join_type) {
+        case join_column::type::inner: {
             os << " INNER ";
             break;
         }
-        case JoinColumn::Type::OUTER: {
+        case join_column::type::outer: {
             os << " OUTER ";
             break;
         }
-        case JoinColumn::Type::LEFT: {
+        case join_column::type::left: {
             os << " LEFT ";
             break;
         }
-        case JoinColumn::Type::RIGHT: {
+        case join_column::type::right: {
             os << " RIGHT ";
             break;
         }
-        case JoinColumn::Type::CROSS: {
+        case join_column::type::cross: {
             os << " CROSS ";
             break;
         }
     }
 
-    os << "JOIN " << obj.joinedTable.tableName() << " ON " << obj.condition.unwrap(CondionViewType::FULL_NAME);
+    os << "JOIN " << obj.joined_table.table_name() << " ON " << obj.condition.unwrap(condion_view_type::FULL_NAME);
 
     return os;
 }

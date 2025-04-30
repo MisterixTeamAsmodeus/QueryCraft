@@ -4,69 +4,69 @@
 
 #include <unordered_map>
 
-namespace QueryCraft {
+namespace query_craft {
 /**
  * Класс Table представляет таблицу в базе данных и предоставляет интерфейс для работы с ее столбцами.
  */
-class Table
+class table
 {
 public:
-    Table() = default;
+    table() = default;
 
     /**
      * Конструктор с указанием имени таблицы и схемы.
      *
-     * @param tableName Имя таблицы.
+     * @param table_name Имя таблицы.
      * @param scheme    Имя схемы. По умолчанию пустая строка.
      * @param columns   Список столбцов таблицы. По умолчанию пустой список.
      */
-    explicit Table(std::string tableName, std::string scheme = "", const std::initializer_list<ColumnInfo>& columns = {});
+    explicit table(std::string table_name, std::string scheme = "", const std::initializer_list<column_info>& columns = {});
 
     /**
      * Конструктор с указанием имени таблицы, схемы и переменного числа столбцов.
      *
-     * @param tableName Имя таблицы.
+     * @param table_name Имя таблицы.
      * @param scheme    Имя схемы.
      * @param columns   Столбцы таблицы.
      */
     template<typename... Args>
-    explicit Table(std::string tableName, std::string scheme, Args&&... columns)
+    explicit table(std::string table_name, std::string scheme, Args&&... columns)
         : _scheme(std::move(scheme))
-        , _tableName(std::move(tableName))
+        , _table_name(std::move(table_name))
     {
         auto columnList = { std::forward<Args>(columns)... };
-        for(const ColumnInfo& column : columnList) {
-            ColumnInfo tempColumn(column);
-            addColumn(tempColumn);
+        for(const column_info& column : columnList) {
+            column_info tempColumn(column);
+            add_column(tempColumn);
         }
     }
 
     /**
      * Конструктор с указанием имени таблицы, схемы и диапазона итераторов столбцов.
      *
-     * @param tableName Имя таблицы.
+     * @param table_name Имя таблицы.
      * @param scheme    Имя схемы.
      * @param startIt   Итератор начала диапазона столбцов.
      * @param endIt     Итератор конца диапазона столбцов.
      */
     template<class StartColumnIt, class EndColumnIt>
-    explicit Table(std::string tableName, std::string scheme, StartColumnIt&& startIt, EndColumnIt&& endIt)
+    explicit table(std::string table_name, std::string scheme, StartColumnIt&& startIt, EndColumnIt&& endIt)
         : _scheme(std::move(scheme))
-        , _tableName(std::move(tableName))
+        , _table_name(std::move(table_name))
     {
-        std::for_each(startIt, endIt, [this](const ColumnInfo& column) {
-            ColumnInfo tempColumn(column);
-            addColumn(tempColumn);
+        std::for_each(startIt, endIt, [this](const column_info& column) {
+            column_info tempColumn(column);
+            add_column(tempColumn);
         });
     }
 
-    Table(const Table& other) = default;
+    table(const table& other) = default;
 
-    Table(Table&& other) noexcept = default;
+    table(table&& other) noexcept = default;
 
-    Table& operator=(const Table& other) = default;
+    table& operator=(const table& other) = default;
 
-    Table& operator=(Table&& other) noexcept = default;
+    table& operator=(table&& other) noexcept = default;
 
     /**
      * Добавление столбца в таблицу.
@@ -74,14 +74,14 @@ public:
      * @param column Столбец для добавления.
      * @return Ссылка на текущую таблицу.
      */
-    Table& addColumn(ColumnInfo& column);
+    table& add_column(column_info& column);
 
     /**
      * Получение полного имени таблицы.
      *
      * @return Имя таблицы с названием схемы если она есть.
      */
-    std::string tableName() const;
+    std::string table_name() const;
 
     /**
      * Получение информации о столбце по его имени.
@@ -89,28 +89,32 @@ public:
      * @param name Имя столбца.
      * @return Информация о столбце.
      */
-    ColumnInfo column(const std::string& name) const;
+    column_info column(const std::string& name) const;
+
+    /**
+     * Получение информации о столбце по его номеру.
+     *
+     * @param index Номер столбца.
+     * @return Информация о столбце.
+     */
+    column_info column(int index) const;
 
     /**
      * Получение списка столбцов таблицы.
      *
      * @return Список столбцов.
      */
-    std::vector<ColumnInfo> columns() const;
-
-    int indexOf(const std::string& name) const;
-
-    int indexOf(const ColumnInfo& column) const;
+    std::vector<column_info> columns() const;
 
 protected:
     /// Название схемы таблицы.
     std::string _scheme {};
     /// Название таблицы.
-    std::string _tableName {};
+    std::string _table_name {};
     /// Список столбцов таблицы. Нужен для сохранения порядка при запросах.
-    std::vector<ColumnInfo> _columns;
+    std::vector<column_info> _columns;
     /// Таблица столбцов. Нужна для быстрого поиска столбца по имени за O(1).
-    std::unordered_map<std::string, ColumnInfo> _columnsMap {};
+    std::unordered_map<std::string, column_info> _columns_map {};
 };
 
-} // namespace QueryCraft
+} // namespace query_craft

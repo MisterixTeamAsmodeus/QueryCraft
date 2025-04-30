@@ -1,17 +1,17 @@
 #include "QueryCraft/operator/notinoperator.h"
 
-namespace QueryCraft {
-namespace Operator {
+namespace query_craft {
+namespace operators {
 
-std::string NotInOperator::sql() const
+std::string not_in_operator::sql() const
 {
     return "NOT IN";
 }
 
-bool NotInOperator::needBracket() const
+bool not_in_operator::need_bracket() const
 {
     return true;
 }
 
-} // namespace Operator
-} // namespace QueryCraft
+} // namespace operators
+} // namespace query_craft

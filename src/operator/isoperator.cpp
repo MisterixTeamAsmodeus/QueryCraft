@@ -1,17 +1,17 @@
 #include "QueryCraft/operator/isoperator.h"
 
-namespace QueryCraft {
-namespace Operator {
+namespace query_craft {
+namespace operators {
 
-std::string IsOperator::sql() const
+std::string is_operator::sql() const
 {
     return "IS";
 }
 
-bool IsOperator::needBracket() const
+bool is_operator::need_bracket() const
 {
     return false;
 }
 
-} // namespace Operator
-} // namespace QueryCraft
+} // namespace operators
+} // namespace query_craft

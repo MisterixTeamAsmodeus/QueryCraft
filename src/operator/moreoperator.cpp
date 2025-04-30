@@ -1,17 +1,17 @@
 #include "QueryCraft/operator/moreoperator.h"
 
-namespace QueryCraft {
-namespace Operator {
+namespace query_craft {
+namespace operators {
 
-std::string MoreOperator::sql() const
+std::string more_operator::sql() const
 {
     return ">";
 }
 
-bool MoreOperator::needBracket() const
+bool more_operator::need_bracket() const
 {
     return false;
 }
 
-} // namespace Operator
-} // namespace QueryCraft
+} // namespace operators
+} // namespace query_craft

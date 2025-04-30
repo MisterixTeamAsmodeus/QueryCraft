@@ -6,15 +6,20 @@
 
 #include <iostream>
 
-namespace QueryCraft {
+namespace query_craft {
 
-ConditionGroup::Condition::Column::Column(std::string name, const Settings settings)
+constexpr char* condition_group::condition::column::null_value()
+{
+    return "NULL";
+}
+
+condition_group::condition::column::column(std::string name, const settings settings)
     : _name(std::move(name))
     , _columnSettings(settings)
 {
 }
 
-bool ConditionGroup::Condition::Column::operator==(const Column& rhs) const
+bool condition_group::condition::column::operator==(const column& rhs) const
 {
     return _name == rhs._name
         && _fullName == rhs._fullName
@@ -22,76 +27,76 @@ bool ConditionGroup::Condition::Column::operator==(const Column& rhs) const
         && _columnSettings == rhs._columnSettings;
 }
 
-bool ConditionGroup::Condition::Column::operator!=(const Column& rhs) const
+bool condition_group::condition::column::operator!=(const column& rhs) const
 {
     return !(*this == rhs);
 }
 
-std::string ConditionGroup::Condition::Column::name() const
+std::string condition_group::condition::column::name() const
 {
     return _name;
 }
 
-std::string ConditionGroup::Condition::Column::fullName() const
+std::string condition_group::condition::column::full_name() const
 {
     return _fullName;
 }
 
-void ConditionGroup::Condition::Column::setFullName(const std::string& fullName)
+void condition_group::condition::column::set_full_name(const std::string& fullName)
 {
     _fullName = fullName;
 }
 
-std::string ConditionGroup::Condition::Column::alias() const
+std::string condition_group::condition::column::alias() const
 {
     return _alias;
 }
 
-void ConditionGroup::Condition::Column::setAlias(const std::string& alias)
+void condition_group::condition::column::set_alias(const std::string& alias)
 {
     _alias = alias;
 }
 
-void ConditionGroup::Condition::Column::addSettings(const Settings settings)
+void condition_group::condition::column::add_settings(const settings settings)
 {
     _columnSettings = settings | _columnSettings;
 }
 
-bool ConditionGroup::Condition::Column::hasSettings(const Settings settings) const
+bool condition_group::condition::column::has_settings(const settings settings) const
 {
     return (_columnSettings | settings) == _columnSettings;
 }
 
-ConditionGroup::Condition ConditionGroup::Condition::Column::isNull() const
+condition_group::condition condition_group::condition::column::is_null() const
 {
-    return createCondition(std::move(std::make_shared<Operator::IsOperator>()), { nullValue() });
+    return create_condition(std::move(std::make_shared<operators::is_operator>()), { null_value() });
 }
 
-ConditionGroup::Condition ConditionGroup::Condition::Column::notNull() const
+condition_group::condition condition_group::condition::column::not_null() const
 {
-    return createCondition(std::move(std::make_shared<Operator::IsNotOperator>()), { nullValue() });
+    return create_condition(std::move(std::make_shared<operators::is_not_operator>()), { null_value() });
 }
 
-ConditionGroup::Condition ConditionGroup::Condition::Column::like(const std::string& pattern) const
+condition_group::condition condition_group::condition::column::like(const std::string& pattern) const
 {
-    return createCondition(std::move(std::make_shared<Operator::LikeOperator>()), { pattern });
+    return create_condition(std::move(std::make_shared<operators::like_operator>()), { pattern });
 }
 
-ConditionGroup::Condition ConditionGroup::Condition::Column::equals(const Column& value) const
+condition_group::condition condition_group::condition::column::equals(const column& value) const
 {
-    return createCondition(std::make_shared<Operator::EqualsOperator>(), { value.fullName() }, false);
+    return create_condition(std::make_shared<operators::equals_operator>(), { value.full_name() }, false);
 }
 
-bool ConditionGroup::Condition::Column::isValid() const
+bool condition_group::condition::column::is_valid() const
 {
-    return !_name.empty() || !_fullName.empty() || !_alias.empty() || _columnSettings != Settings::NONE;
+    return !_name.empty() || !_fullName.empty() || !_alias.empty() || _columnSettings != settings::none;
 }
 
-ConditionGroup::Condition ConditionGroup::Condition::Column::createCondition(std::shared_ptr<Operator::IOperator>&& conditionOperator, std::vector<std::string>&& values, bool need_forging) const
+condition_group::condition condition_group::condition::column::create_condition(std::shared_ptr<operators::IOperator>&& conditionOperator, std::vector<std::string>&& values, bool need_forging) const
 {
-    Condition condition;
+    condition condition;
 
-    condition._conditionOperator = std::move(conditionOperator);
+    condition._condition_operator = std::move(conditionOperator);
     condition._column = *this;
     condition._values = std::move(values);
     condition._need_forging = need_forging;
@@ -99,105 +104,105 @@ ConditionGroup::Condition ConditionGroup::Condition::Column::createCondition(std
     return std::move(condition);
 }
 
-ConditionGroup ConditionGroup::Condition::operator&&(const Condition& rhd) const
+condition_group condition_group::condition::operator&&(const condition& rhd) const
 {
-    ConditionGroup group;
+    condition_group group;
 
-    std::get<0>(group._node) = LogicalOperator::AND;
+    std::get<0>(group._node) = logical_operator::and;
 
-    group._left = std::make_shared<ConditionGroup>();
+    group._left = std::make_shared<condition_group>();
     std::get<1>(group._left->_node) = *this;
 
-    group._right = std::make_shared<ConditionGroup>();
+    group._right = std::make_shared<condition_group>();
     std::get<1>(group._right->_node) = rhd;
 
     return group;
 }
 
-ConditionGroup ConditionGroup::Condition::operator&&(const ConditionGroup& rhd) const
+condition_group condition_group::condition::operator&&(const condition_group& rhd) const
 {
-    ConditionGroup group;
+    condition_group group;
 
-    std::get<0>(group._node) = LogicalOperator::AND;
+    std::get<0>(group._node) = logical_operator::and;
 
-    group._left = std::make_shared<ConditionGroup>();
+    group._left = std::make_shared<condition_group>();
     std::get<1>(group._left->_node) = *this;
 
-    group._right = std::make_shared<ConditionGroup>(rhd);
+    group._right = std::make_shared<condition_group>(rhd);
 
     return group;
 }
 
-ConditionGroup ConditionGroup::Condition::operator||(const Condition& rhd) const
+condition_group condition_group::condition::operator||(const condition& rhd) const
 {
-    ConditionGroup group;
+    condition_group group;
 
-    std::get<0>(group._node) = LogicalOperator::OR;
+    std::get<0>(group._node) = logical_operator:: or ;
 
-    group._left = std::make_shared<ConditionGroup>();
+    group._left = std::make_shared<condition_group>();
     std::get<1>(group._left->_node) = *this;
 
-    group._right = std::make_shared<ConditionGroup>();
+    group._right = std::make_shared<condition_group>();
     std::get<1>(group._right->_node) = rhd;
 
     return group;
 }
 
-ConditionGroup ConditionGroup::Condition::operator||(const ConditionGroup& rhd) const
+condition_group condition_group::condition::operator||(const condition_group& rhd) const
 {
-    ConditionGroup group;
+    condition_group group;
 
-    std::get<0>(group._node) = LogicalOperator::OR;
+    std::get<0>(group._node) = logical_operator:: or ;
 
-    group._left = std::make_shared<ConditionGroup>();
+    group._left = std::make_shared<condition_group>();
     std::get<1>(group._left->_node) = *this;
 
-    group._right = std::make_shared<ConditionGroup>(rhd);
+    group._right = std::make_shared<condition_group>(rhd);
 
     return group;
 }
 
-std::string ConditionGroup::Condition::unwrap(const CondionViewType viewType) const
+std::string condition_group::condition::unwrap(const condion_view_type view_type) const
 {
     if(_values.empty())
         return "";
 
     std::stringstream stream;
 
-    switch(viewType) {
-        case CondionViewType::NAME: {
+    switch(view_type) {
+        case condion_view_type::NAME: {
             stream << "\"" << _column.name() << "\"";
             break;
         }
-        case CondionViewType::ALIAS: {
+        case condion_view_type::ALIAS: {
             stream << _column.alias();
             break;
         }
-        case CondionViewType::FULL_NAME: {
-            stream << _column.fullName();
+        case condion_view_type::FULL_NAME: {
+            stream << _column.full_name();
             break;
         }
     }
 
-    stream << " " << _conditionOperator->sql() << " ";
+    stream << " " << _condition_operator->sql() << " ";
 
-    if(_conditionOperator->needBracket())
+    if(_condition_operator->need_bracket())
         stream << "(";
 
     std::for_each(_values.begin(), _values.end(), [&stream, this](const auto& value) {
-        if(value != Column::nullValue() && _need_forging)
+        if(value != column::null_value() && _need_forging)
             stream << "'";
 
         stream << value;
 
-        if(value != Column::nullValue() && _need_forging)
+        if(value != column::null_value() && _need_forging)
             stream << "'";
 
-        if(_conditionOperator->needBracket())
+        if(_condition_operator->need_bracket())
             stream << ", ";
     });
 
-    if(_conditionOperator->needBracket()) {
+    if(_condition_operator->need_bracket()) {
         stream.seekp(-2, std::stringstream::cur);
         stream << ")";
     }
@@ -205,148 +210,148 @@ std::string ConditionGroup::Condition::unwrap(const CondionViewType viewType) co
     return stream.str();
 }
 
-ConditionGroup::Condition::Column ConditionGroup::Condition::column() const
+condition_group::condition::column condition_group::condition::condition_column() const
 {
     return _column;
 }
 
-std::shared_ptr<Operator::IOperator> ConditionGroup::Condition::conditionOperator() const
+std::shared_ptr<operators::IOperator> condition_group::condition::condition_operator() const
 {
-    return _conditionOperator;
+    return _condition_operator;
 }
 
-std::vector<std::string> ConditionGroup::Condition::values() const
+std::vector<std::string> condition_group::condition::values() const
 {
     return _values;
 }
 
-bool ConditionGroup::Condition::isValid() const
+bool condition_group::condition::is_valid() const
 {
-    return _conditionOperator != nullptr || !_values.empty() || _column.isValid();
+    return _condition_operator != nullptr || !_values.empty() || _column.is_valid();
 }
 
-ConditionGroup::ConditionGroup(const Condition& condition)
+condition_group::condition_group(const condition& condition)
 {
     std::get<1>(_node) = condition;
 }
 
-ConditionGroup ConditionGroup::operator&&(const ConditionGroup& rhd) const
+condition_group condition_group::operator&&(const condition_group& rhd) const
 {
-    ConditionGroup group;
+    condition_group group;
 
-    std::get<0>(group._node) = LogicalOperator::AND;
+    std::get<0>(group._node) = logical_operator::and;
 
-    group._left = std::make_shared<ConditionGroup>(*this);
+    group._left = std::make_shared<condition_group>(*this);
 
-    group._right = std::make_shared<ConditionGroup>(rhd);
+    group._right = std::make_shared<condition_group>(rhd);
 
     return group;
 }
 
-ConditionGroup ConditionGroup::operator&&(const Condition& rhd) const
+condition_group condition_group::operator&&(const condition& rhd) const
 {
-    ConditionGroup group;
+    condition_group group;
 
-    std::get<0>(group._node) = LogicalOperator::AND;
+    std::get<0>(group._node) = logical_operator::and;
 
-    group._left = std::make_shared<ConditionGroup>(*this);
+    group._left = std::make_shared<condition_group>(*this);
 
-    group._right = std::make_shared<ConditionGroup>();
+    group._right = std::make_shared<condition_group>();
     std::get<1>(group._right->_node) = rhd;
 
     return group;
 }
 
-ConditionGroup ConditionGroup::operator||(const ConditionGroup& rhd) const
+condition_group condition_group::operator||(const condition_group& rhd) const
 {
-    ConditionGroup group;
+    condition_group group;
 
-    std::get<0>(group._node) = LogicalOperator::OR;
+    std::get<0>(group._node) = logical_operator:: or ;
 
-    group._left = std::make_shared<ConditionGroup>(*this);
+    group._left = std::make_shared<condition_group>(*this);
 
-    group._right = std::make_shared<ConditionGroup>(rhd);
+    group._right = std::make_shared<condition_group>(rhd);
 
     return group;
 }
 
-ConditionGroup ConditionGroup::operator||(const Condition& rhd) const
+condition_group condition_group::operator||(const condition& rhd) const
 {
-    ConditionGroup group;
+    condition_group group;
 
-    std::get<0>(group._node) = LogicalOperator::OR;
+    std::get<0>(group._node) = logical_operator:: or ;
 
-    group._left = std::make_shared<ConditionGroup>(*this);
+    group._left = std::make_shared<condition_group>(*this);
 
-    group._right = std::make_shared<ConditionGroup>();
+    group._right = std::make_shared<condition_group>();
     std::get<1>(group._right->_node) = rhd;
 
     return group;
 }
 
-std::string ConditionGroup::unwrap(const CondionViewType viewType, const bool compressed) const
+std::string condition_group::unwrap(const condion_view_type view_type, const bool compressed) const
 {
     std::stringstream stream;
-    unwrapTree(this, stream, viewType, compressed);
+    unwrap_tree(this, stream, view_type, compressed);
 
     return stream.str();
 }
 
-bool ConditionGroup::isValid() const
+bool condition_group::is_valid() const
 {
-    return !isSheet() || std::get<1>(_node).isValid();
+    return !is_sheet() || std::get<1>(_node).is_valid();
 }
 
-bool ConditionGroup::isSheet() const
+bool condition_group::is_sheet() const
 {
     return _left == _right && _left == nullptr;
 }
 
-void ConditionGroup::unwrapTree(const ConditionGroup* node, std::stringstream& stream, const CondionViewType viewType, const bool compressed)
+void condition_group::unwrap_tree(const condition_group* node, std::stringstream& stream, const condion_view_type view_type, const bool compressed)
 {
-    if(node->isSheet()) {
-        stream << std::get<1>(node->_node).unwrap(viewType);
+    if(node->is_sheet()) {
+        stream << std::get<1>(node->_node).unwrap(view_type);
         return;
     }
 
     stream << "(";
 
     if(node->_left != nullptr)
-        unwrapTree(node->_left.get(), stream, viewType, compressed);
+        unwrap_tree(node->_left.get(), stream, view_type, compressed);
 
     if(!compressed)
         stream << "\n";
 
     switch(std::get<0>(node->_node)) {
-        case LogicalOperator::AND: {
+        case logical_operator::and: {
             stream << " AND ";
             break;
         }
-        case LogicalOperator::OR: {
+        case logical_operator:: or: {
             stream << " OR ";
             break;
         }
     }
 
     if(node->_right != nullptr)
-        unwrapTree(node->_right.get(), stream, viewType, compressed);
+        unwrap_tree(node->_right.get(), stream, view_type, compressed);
 
     stream << ")";
 }
 
-ColumnInfo::Settings operator|(ColumnInfo::Settings a, ColumnInfo::Settings b)
+column_settings operator|(column_settings a, column_settings b)
 {
-    return static_cast<ColumnInfo::Settings>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
+    return static_cast<column_settings>(static_cast<uint8_t>(a) | static_cast<uint8_t>(b));
 }
 
-ColumnSettings primary_key()
+column_settings primary_key()
 {
-    return ColumnSettings::PRIMARY_KEY | ColumnSettings::NOT_NULL;
+    return column_settings::primary_key | column_settings::not_null;
 }
 
-ColumnSettings not_null()
+column_settings not_null()
 {
-    return ColumnSettings::NOT_NULL;
+    return column_settings::not_null;
 }
 
-} // namespace QueryCraft
+} // namespace query_craft

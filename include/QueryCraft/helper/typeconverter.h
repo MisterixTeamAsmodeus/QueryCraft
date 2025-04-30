@@ -3,8 +3,8 @@
 #include <sstream>
 #include <string>
 
-namespace QueryCraft {
-namespace Helper {
+namespace query_craft {
+namespace helper {
 
 /**
  * @brief Преобразует значение в строку.
@@ -13,7 +13,7 @@ namespace Helper {
  * @return Строковое представление значения.
  */
 template<typename T>
-std::string convertToString(T& value)
+std::string convert_to_string(T& value)
 {
     std::stringstream stream;
     stream << value;
@@ -22,10 +22,10 @@ std::string convertToString(T& value)
 }
 
 template<>
-inline std::string convertToString(bool& value)
+inline std::string convert_to_string(bool& value)
 {
     return value ? "true" : "false";
 }
 
-} // namespace Helper
-} // namespace QueryCraft
+} // namespace helper
+} // namespace query_craft

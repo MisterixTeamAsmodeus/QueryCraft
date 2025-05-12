@@ -24,10 +24,10 @@ struct sort_column
     type sort_type = type::asc;
 };
 
-inline sort_column asc_sort(const column_info& column);
+sort_column asc_sort(const column_info& column);
 
-inline sort_column desc_sort(const column_info& column);
+sort_column desc_sort(const column_info& column);
 
-inline sort_column random_sort();
+sort_column random_sort();
 
 } // namespace query_craft

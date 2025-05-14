@@ -54,7 +54,10 @@ struct condition_group
              * Возвращает константу, представляющую пустое значение для столбца.
              * @return Строка "NULL".
              */
-            constexpr static char* null_value();
+            constexpr static char* null_value()
+            {
+                return "NULL";
+            }
 
             column() = default;
 

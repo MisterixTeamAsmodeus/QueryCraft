@@ -6,11 +6,6 @@
 
 namespace query_craft {
 
-constexpr char* condition_group::condition::column::null_value()
-{
-    return "NULL";
-}
-
 condition_group::condition::column::column(std::string name, const settings settings)
     : _name(std::move(name))
     , _columnSettings(settings)

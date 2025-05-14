@@ -97,7 +97,7 @@ public:
         row row;
 
         helper::for_each(values, [&row](auto&& value) {
-            row.emplace_back(helper::convert_to_string(value));
+            row.emplace_back(type_converter_api::type_converter<decltype(value)>().convert_to_string(value));
         });
 
         if(!rows.empty() && rows.begin()->size() != row.size())

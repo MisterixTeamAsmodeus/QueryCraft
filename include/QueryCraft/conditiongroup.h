@@ -2,7 +2,6 @@
 
 #include "enum/conditionviewtype.h"
 #include "enum/logicaloperator.h"
-#include "helper/typeconverter.h"
 #include "operator/equalsoperator.h"
 #include "operator/inoperator.h"
 #include "operator/lessoperator.h"
@@ -11,6 +10,8 @@
 #include "operator/moreorequalsoperator.h"
 #include "operator/notequalsoperator.h"
 #include "operator/notinoperator.h"
+
+#include <TypeConverterApi/typeconverterapi.h>
 
 #include <algorithm>
 #include <cstdint>
@@ -143,8 +144,9 @@ struct condition_group
             condition in(Args&&... args) const
             {
                 std::vector<std::string> values;
-                for(const auto& arg : { std::forward<Args>(args)... })
-                    values.emplace_back(helper::convert_to_string(arg));
+                for(const auto& arg : { std::forward<Args>(args)... }) {
+                    values.emplace_back(type_converter_api::type_converter<decltype(arg)>().convert_to_string(arg));
+                }
 
                 return create_condition(std::make_shared<operators::in_operator>(), std::move(values));
             }
@@ -163,7 +165,7 @@ struct condition_group
                 std::vector<std::string> values;
 
                 std::for_each(start_it, end_it, [&values](const auto& arg) {
-                    values.emplace_back(helper::convert_to_string(arg));
+                    values.emplace_back(type_converter_api::type_converter<decltype(arg)>().convert_to_string(arg));
                 });
 
                 return create_condition(std::make_shared<operators::in_operator>(), std::move(values));
@@ -180,7 +182,7 @@ struct condition_group
             {
                 std::vector<std::string> values;
                 for(const auto& arg : { std::forward<Args>(args)... })
-                    values.emplace_back(helper::convert_to_string(arg));
+                    values.emplace_back(type_converter_api::type_converter<decltype(arg)>().convert_to_string(arg));
 
                 return create_condition(std::make_shared<operators::not_in_operator>(), std::move(values));
             }
@@ -199,7 +201,7 @@ struct condition_group
                 std::vector<std::string> values;
 
                 std::for_each(start_it, end_it, [&values](const auto& arg) {
-                    values.emplace_back(helper::convert_to_string(arg));
+                    values.emplace_back(type_converter_api::type_converter<decltype(arg)>().convert_to_string(arg));
                 });
 
                 return create_condition(std::make_shared<operators::not_in_operator>(), std::move(values));
@@ -214,7 +216,8 @@ struct condition_group
             template<typename T>
             condition operator==(const T& value) const
             {
-                return create_condition(std::make_shared<operators::equals_operator>(), { helper::convert_to_string(value) });
+                return create_condition(std::make_shared<operators::equals_operator>(),
+                    { type_converter_api::type_converter<T>().convert_to_string(value) });
             }
 
             /**
@@ -235,7 +238,8 @@ struct condition_group
             template<typename T>
             condition operator!=(const T& value) const
             {
-                return create_condition(std::make_shared<operators::not_equals_operator>(), { helper::convert_to_string(value) });
+                return create_condition(std::make_shared<operators::not_equals_operator>(),
+                    { type_converter_api::type_converter<T>().convert_to_string(value) });
             }
 
             /**
@@ -247,7 +251,8 @@ struct condition_group
             template<typename T>
             condition operator<(const T& value) const
             {
-                return create_condition(std::make_shared<operators::less_operator>(), { helper::convert_to_string(value) });
+                return create_condition(std::make_shared<operators::less_operator>(),
+                    { type_converter_api::type_converter<T>().convert_to_string(value) });
             }
 
             /**
@@ -259,7 +264,8 @@ struct condition_group
             template<typename T>
             condition operator<=(const T& value) const
             {
-                return create_condition(std::make_shared<operators::less_or_equals_operator>(), { helper::convert_to_string(value) });
+                return create_condition(std::make_shared<operators::less_or_equals_operator>(),
+                    { type_converter_api::type_converter<T>().convert_to_string(value) });
             }
 
             /**
@@ -271,7 +277,8 @@ struct condition_group
             template<typename T>
             condition operator>(const T& value) const
             {
-                return create_condition(std::make_shared<operators::more_operator>(), { helper::convert_to_string(value) });
+                return create_condition(std::make_shared<operators::more_operator>(),
+                    { type_converter_api::type_converter<T>().convert_to_string(value) });
             }
 
             /**
@@ -283,7 +290,8 @@ struct condition_group
             template<typename T>
             condition operator>=(const T& value) const
             {
-                return create_condition(std::make_shared<operators::more_or_equals_operator>(), { helper::convert_to_string(value) });
+                return create_condition(std::make_shared<operators::more_or_equals_operator>(),
+                    { type_converter_api::type_converter<T>().convert_to_string(value) });
             }
 
             /**
@@ -299,7 +307,9 @@ struct condition_group
              * @param values Значения, которые будут использованы в условии.
              * @return Объект условия.
              */
-            condition create_condition(std::shared_ptr<operators::IOperator>&& conditionOperator, std::vector<std::string>&& values, bool need_forging = true) const;
+            condition create_condition(std::shared_ptr<operators::IOperator>&& conditionOperator,
+                std::vector<std::string>&& values,
+                bool need_forging = true) const;
 
         private:
             /// Имя столбца.

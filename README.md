@@ -1,28 +1,74 @@
 # QueryCraft
 
-Библиотека QueryCraft предназначена для автоматической генерации SQL-запросов. Она предоставляет разработчикам инструменты для создания сложных запросов без необходимости написания кода вручную.
+## Обзор
+QueryCraft - это современная C++ библиотека для построения SQL-запросов с использованием fluent-интерфейса. Библиотека предоставляет типобезопасный и интуитивно понятный способ создания сложных SQL-запросов без необходимости написания сырого SQL-кода.
 
-Для использования необходимо описать структуру таблицы:
-``` 
-sql_table table("table_name", "schema_name",
-    column_info("c1"),
-    column_info("c2"),
-    column_info("c3"));
-```
+## Ключевые особенности
+- Fluent-интерфейс: Читаемый и выразительный синтаксис построения запросов.
+- Поддержка основных SQL-операций: SELECT, INSERT, UPDATE, DELETE.
+- Сложные условия запросов: Поддержка логических операторов (AND, OR), сравнений и других условий.
+- JOIN-операции: Поддержка различных типов соединений таблиц.
+- Сортировка и ограничения: ORDER BY, LIMIT, OFFSET.
+- Расширяемость: Возможность добавления пользовательских операторов и условий.
 
-Далее у этого класса есть следующий перечень функций, который отвечает за генерацию соответствующего запроса.
-```
-add_row(const row& row);
+## Основные компоненты
+1. Таблицы и столбцы
+    
+   Библиотека предоставляет классы для работы с таблицами и столбцами:
+    - **table** - базовый класс для представления таблицы
+    - **sql_table** - расширенный класс таблицы с методами для генерации SQL
+    - **column_info** - информация о столбце таблицы
 
-insert_sql(const std::vector<column_info>& columns = {});
-update_sql(const condition_group& condition = {}, const std::vector<column_info>& columns = {});
-remove_sql(const condition_group& condition = {}) const;
-std::string select_sql(
-    const std::vector<join_column>& join_columns = {},
-    const condition_group& condition = {},
-    const std::vector<sort_column>& sort_columns = {},
-    size_t limit = 0,
-    size_t offset = 0,
-    const std::vector<column_info>& columns = {}) const;
-```
-Функция add_row нужна для того, чтобы передать информацию о строке для вставки или обновления
+    Пример создания таблицы:
+    ```c++
+    sql_table users("users", "public",
+    column_info("id", primary_key()),
+    column_info("name", not_null()),
+    column_info("email")
+    );
+    ```
+
+2. Условия запросов
+   Библиотека предоставляет мощный механизм для построения условий:
+   - condition_group - группа условий с логическими операторами
+   - Разнообразные операторы сравнения: ==, !=, <, >, <=, >=
+   - Специальные операторы: IN, NOT IN, LIKE, IS NULL, IS NOT NULL
+
+    Пример сложного условия:
+    ```c++
+    auto condition = (users.column("age") > 18 && 
+                (users.column("name").like("John%") || 
+                 users.column("email").in("john@example.com", "john@test.com")));
+    ```
+
+3. Построение запросов
+   sql_table предоставляет методы для генерации SQL-запросов:
+   - **select_sql**() - создание SELECT запроса
+   - **insert_sql**() - создание INSERT запроса
+   - **update_sql**() - создание UPDATE запроса
+   - **remove_sql**() - создание DELETE запроса
+     Пример SELECT запроса:
+   ```c++
+    auto query = users.select_sql(
+    { /* join_columns */ },
+    users.column("age") > 21,
+    { desc_sort(users.column("name")) },
+    10, 0, // LIMIT 10 OFFSET 0
+    { users.column("id"), users.column("name") }
+    );
+    ```
+
+## Требования
+C++14 или новее
+
+Зависимость от **TypeConverterApi** для работы с преобразованием типов
+
+## Установка
+1. Скопируйте заголовочные файлы в ваш проект
+
+2. Подключите основной заголовочный файл querycraft.h
+
+3. Убедитесь, что TypeConverterApi доступен в путях поиска заголовков
+
+## Лицензия
+Библиотека распространяется под лицензией MIT. Подробности см. в файле LICENSE.

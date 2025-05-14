@@ -4,8 +4,6 @@
 #include "QueryCraft/operator/isoperator.h"
 #include "QueryCraft/operator/likeoperator.h"
 
-#include <iostream>
-
 namespace query_craft {
 
 constexpr char* condition_group::condition::column::null_value()

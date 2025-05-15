@@ -101,7 +101,7 @@ condition_group condition_group::condition::operator&&(const condition& rhd) con
 {
     condition_group group;
 
-    std::get<0>(group._node) = logical_operator::and;
+    std::get<0>(group._node) = logical_operator::and_;
 
     group._left = std::make_shared<condition_group>();
     std::get<1>(group._left->_node) = *this;
@@ -116,7 +116,7 @@ condition_group condition_group::condition::operator&&(const condition_group& rh
 {
     condition_group group;
 
-    std::get<0>(group._node) = logical_operator::and;
+    std::get<0>(group._node) = logical_operator::and_;
 
     group._left = std::make_shared<condition_group>();
     std::get<1>(group._left->_node) = *this;
@@ -130,7 +130,7 @@ condition_group condition_group::condition::operator||(const condition& rhd) con
 {
     condition_group group;
 
-    std::get<0>(group._node) = logical_operator:: or ;
+    std::get<0>(group._node) = logical_operator::or_ ;
 
     group._left = std::make_shared<condition_group>();
     std::get<1>(group._left->_node) = *this;
@@ -145,7 +145,7 @@ condition_group condition_group::condition::operator||(const condition_group& rh
 {
     condition_group group;
 
-    std::get<0>(group._node) = logical_operator:: or ;
+    std::get<0>(group._node) = logical_operator::or_ ;
 
     group._left = std::make_shared<condition_group>();
     std::get<1>(group._left->_node) = *this;
@@ -232,7 +232,7 @@ condition_group condition_group::operator&&(const condition_group& rhd) const
 {
     condition_group group;
 
-    std::get<0>(group._node) = logical_operator::and;
+    std::get<0>(group._node) = logical_operator::and_;
 
     group._left = std::make_shared<condition_group>(*this);
 
@@ -245,7 +245,7 @@ condition_group condition_group::operator&&(const condition& rhd) const
 {
     condition_group group;
 
-    std::get<0>(group._node) = logical_operator::and;
+    std::get<0>(group._node) = logical_operator::and_;
 
     group._left = std::make_shared<condition_group>(*this);
 
@@ -259,7 +259,7 @@ condition_group condition_group::operator||(const condition_group& rhd) const
 {
     condition_group group;
 
-    std::get<0>(group._node) = logical_operator:: or ;
+    std::get<0>(group._node) = logical_operator::or_ ;
 
     group._left = std::make_shared<condition_group>(*this);
 
@@ -272,7 +272,7 @@ condition_group condition_group::operator||(const condition& rhd) const
 {
     condition_group group;
 
-    std::get<0>(group._node) = logical_operator:: or ;
+    std::get<0>(group._node) = logical_operator::or_ ;
 
     group._left = std::make_shared<condition_group>(*this);
 
@@ -316,11 +316,11 @@ void condition_group::unwrap_tree(const condition_group* node, std::stringstream
         stream << "\n";
 
     switch(std::get<0>(node->_node)) {
-        case logical_operator::and: {
+        case logical_operator::and_: {
             stream << " AND ";
             break;
         }
-        case logical_operator:: or: {
+        case logical_operator::or_: {
             stream << " OR ";
             break;
         }

@@ -12,12 +12,12 @@ enum class logical_operator : uint8_t
     /**
      * Логический оператор "И".
      */
-    and,
+    and_,
 
     /**
      * Логический оператор "ИЛИ".
      */
-    or
+    or_
 };
 
 } // namespace query_craft

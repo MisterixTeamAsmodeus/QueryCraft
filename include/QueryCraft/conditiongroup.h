@@ -361,7 +361,7 @@ struct condition_group
          * @param view_type Настройки для отображения названия колонки.
          * @return Строковое представление текущего условия.
          */
-        std::string unwrap(condion_view_type view_type = condion_view_type::NAME) const;
+        std::string unwrap(condion_view_type view_type = condion_view_type::name) const;
 
         /**
          * Возвращает информацию о столбце текущего условия.
@@ -444,7 +444,7 @@ struct condition_group
      * @param compressed Сжать выходную строку, если это возможно.
      * @return Строковое представление текущего условия.
      */
-    std::string unwrap(condion_view_type view_type = condion_view_type::NAME, bool compressed = true) const;
+    std::string unwrap(condion_view_type view_type = condion_view_type::name, bool compressed = true) const;
 
     /**
      * Проверяет, является ли текущее условие валидным.
@@ -492,16 +492,6 @@ using column_info = condition_group::condition::column;
 using condition_info = condition_group::condition;
 
 using column_settings = condition_group::condition::column::settings;
-
-/**
- * @brief Оператор "и" для перечисления ColumnInfo::Settings.
- *
- * @param a Первый операнд.
- * @param b Второй операнд.
- *
- * @return Результат операции "и" для двух перечислений ColumnInfo::Settings.
- */
-column_settings operator&(column_settings a, column_settings b);
 
 /**
  * @brief Оператор "и" для перечисления ColumnInfo::Settings.

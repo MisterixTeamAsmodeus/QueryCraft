@@ -25,7 +25,7 @@ std::ostream& query_craft::operator<<(std::ostream& os, const join_column& obj)
         }
     }
 
-    os << "JOIN " << obj.joined_table.table_name() << " ON " << obj.condition.unwrap(condion_view_type::FULL_NAME);
+    os << "JOIN " << obj.joined_table.table_name() << " ON " << obj.condition.unwrap(condion_view_type::full_name);
 
     return os;
 }

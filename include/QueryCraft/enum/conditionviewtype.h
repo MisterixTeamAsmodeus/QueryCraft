@@ -8,11 +8,11 @@ namespace query_craft {
 enum class condion_view_type : uint8_t
 {
     /// Представление по имени.
-    NAME,
+    name,
     /// Представление по псевдониму.
-    ALIAS,
+    alias,
     /// Полное представление.
-    FULL_NAME
+    full_name
 };
 
 } // namespace query_craft

@@ -207,7 +207,7 @@ std::string sql_table::select_sql(
         sql_stream << joinColumn << " ";
     }
     if(condition.is_valid())
-        sql_stream << " WHERE " << condition.unwrap(condion_view_type::FULL_NAME);
+        sql_stream << " WHERE " << condition.unwrap(condion_view_type::full_name);
 
     if(!sort_columns.empty()) {
         sql_stream << " ORDER BY ";

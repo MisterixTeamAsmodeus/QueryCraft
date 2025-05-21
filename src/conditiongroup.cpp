@@ -163,15 +163,15 @@ std::string condition_group::condition::unwrap(const condion_view_type view_type
     std::stringstream stream;
 
     switch(view_type) {
-        case condion_view_type::NAME: {
+        case condion_view_type::name: {
             stream << "\"" << _column.name() << "\"";
             break;
         }
-        case condion_view_type::ALIAS: {
+        case condion_view_type::alias: {
             stream << _column.alias();
             break;
         }
-        case condion_view_type::FULL_NAME: {
+        case condion_view_type::full_name: {
             stream << _column.full_name();
             break;
         }

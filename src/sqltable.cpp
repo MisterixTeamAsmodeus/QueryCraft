@@ -92,7 +92,7 @@ std::string sql_table::insert_sql(const std::vector<column_info>& columns, bool 
     sql_stream.seekp(-1, std::stringstream::cur);
 
     if(need_returning) {
-        sql_stream << "RETURNING ";
+        sql_stream << " RETURNING ";
 
         if(returning_columns.empty()) {
             sql_stream << "*";

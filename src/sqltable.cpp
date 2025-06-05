@@ -46,12 +46,12 @@ sql_table& sql_table::add_row(const row& row)
     return *this;
 }
 
-std::string sql_table::insert_args(const std::initializer_list<column_info>& columns)
+std::string sql_table::insert_args(const std::initializer_list<column_info>& columns, const bool need_returning, const std::initializer_list<column_info>& returning_columns)
 {
-    return insert_sql(std::vector<column_info>(columns));
+    return insert_sql(std::vector<column_info>(columns), need_returning, std::vector<column_info>(returning_columns));
 }
 
-std::string sql_table::insert_sql(const std::vector<column_info>& columns)
+std::string sql_table::insert_sql(const std::vector<column_info>& columns, bool need_returning, const std::vector<column_info>& returning_columns)
 {
     const auto insert_columns = columns.empty() ? _columns : columns;
 
@@ -90,6 +90,21 @@ std::string sql_table::insert_sql(const std::vector<column_info>& columns)
     }
 
     sql_stream.seekp(-1, std::stringstream::cur);
+
+    if(need_returning) {
+        sql_stream << "RETURNING ";
+
+        if(returning_columns.empty()) {
+            sql_stream << "*";
+        } else {
+            for(const auto& returning_column : returning_columns) {
+                sql_stream << "\"" << returning_column.name() << "\""
+                           << ", ";
+            }
+
+            sql_stream.seekp(-2, std::stringstream::cur);
+        }
+    }
 
     sql_stream << ";";
 

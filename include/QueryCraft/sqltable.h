@@ -110,21 +110,25 @@ public:
     /**
      * Генерация SQL-запроса для вставки строки в таблицу.
      *
-     * @param columns Столбцы для вставки. По умолчанию все столбцы.
+     * @param columns Столбцы для вставки. По умолчанию все стол
+     * @param need_returning Флаг означающий что в конце запроса необходимо вернуть вставленные колонки
+     * @param returning_columns Колонки которые необходимо вернуть после вставкибцы.
      * @return SQL-запрос для вставки.
      * @note Очищает добавленные строки
      * @note Перегрузка для передачи параметров через initializer_list, так как бывают ситуации когда он не может не явно кастануть к vector
      */
-    std::string insert_args(const std::initializer_list<column_info>& columns);
+    std::string insert_args(const std::initializer_list<column_info>& columns, bool need_returning = false, const std::initializer_list<column_info>& returning_columns = {});
 
     /**
      * Генерация SQL-запроса для вставки строки в таблицу.
      *
      * @param columns Столбцы для вставки. По умолчанию все столбцы.
+     * @param need_returning Флаг означающий что в конце запроса необходимо вернуть вставленные колонки
+     * @param returning_columns Колонки которые необходимо вернуть после вставки
      * @return SQL-запрос для вставки.
      * @note Очищает добавленные строки
      */
-    std::string insert_sql(const std::vector<column_info>& columns = {});
+    std::string insert_sql(const std::vector<column_info>& columns = {}, bool need_returning = false, const std::vector<column_info>& returning_columns = {});
 
     /**
      * Генерация SQL-запроса для обновления строки в таблице.

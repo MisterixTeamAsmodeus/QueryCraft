@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.8)
 
 set(query_craft_project_name QueryCraft)
 option(QUERY_CRAFT_EXAMPLE "Add examples file as executable (on|off)" OFF)
@@ -23,11 +23,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 )
 
 target_compile_features(${query_craft_project_name} PUBLIC cxx_std_14)
-
-set_target_properties(${PROJECT_NAME}
-        PROPERTIES
-        OUTPUT_NAME ${PROJECT_NAME}
-)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

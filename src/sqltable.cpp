@@ -7,7 +7,28 @@ void insert_with_escaping_character(std::stringstream& sql_stream, const std::st
         sql_stream << "'";
     }
 
-    sql_stream << value;
+    for(const auto ch : value) {
+        switch(ch) {
+            case '\'': {
+                sql_stream << "\'";
+                break;
+            }
+
+            case '"': {
+                sql_stream << "\"";
+                break;
+            }
+
+            case '\\': {
+                sql_stream << "\\";
+                break;
+            }
+
+            default: {
+                sql_stream << ch;
+            }
+        }
+    }
 
     if(value != query_craft::column_info::null_value()) {
         sql_stream << "'";

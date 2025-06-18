@@ -10,17 +10,12 @@ void insert_with_escaping_character(std::stringstream& sql_stream, const std::st
     for(const auto ch : value) {
         switch(ch) {
             case '\'': {
-                sql_stream << "\'";
-                break;
-            }
-
-            case '"': {
-                sql_stream << "\"";
+                sql_stream << "\'\'";
                 break;
             }
 
             case '\\': {
-                sql_stream << "\\";
+                sql_stream << "\\\\";
                 break;
             }
 

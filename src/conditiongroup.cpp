@@ -80,6 +80,31 @@ condition_group::condition condition_group::condition::column::equals(const colu
     return create_condition(std::make_shared<operators::equals_operator>(), { value.full_name() }, false);
 }
 
+condition_group::condition condition_group::condition::column::not_equals(const column& value) const
+{
+    return create_condition(std::make_shared<operators::not_equals_operator>(), { value.full_name() }, false);
+}
+
+condition_group::condition condition_group::condition::column::less(const column& value) const
+{
+    return create_condition(std::make_shared<operators::less_operator>(), { value.full_name() }, false);
+}
+
+condition_group::condition condition_group::condition::column::less_or_equals(const column& value) const
+{
+    return create_condition(std::make_shared<operators::less_or_equals_operator>(), { value.full_name() }, false);
+}
+
+condition_group::condition condition_group::condition::column::more(const column& value) const
+{
+    return create_condition(std::make_shared<operators::more_operator>(), { value.full_name() }, false);
+}
+
+condition_group::condition condition_group::condition::column::more_or_equals(const column& value) const
+{
+    return create_condition(std::make_shared<operators::more_or_equals_operator>(), { value.full_name() }, false);
+}
+
 bool condition_group::condition::column::is_valid() const
 {
     return !_name.empty() || !_fullName.empty() || !_alias.empty() || _columnSettings != settings::none;
@@ -130,7 +155,7 @@ condition_group condition_group::condition::operator||(const condition& rhd) con
 {
     condition_group group;
 
-    std::get<0>(group._node) = logical_operator::or_ ;
+    std::get<0>(group._node) = logical_operator::or_;
 
     group._left = std::make_shared<condition_group>();
     std::get<1>(group._left->_node) = *this;
@@ -145,7 +170,7 @@ condition_group condition_group::condition::operator||(const condition_group& rh
 {
     condition_group group;
 
-    std::get<0>(group._node) = logical_operator::or_ ;
+    std::get<0>(group._node) = logical_operator::or_;
 
     group._left = std::make_shared<condition_group>();
     std::get<1>(group._left->_node) = *this;
@@ -259,7 +284,7 @@ condition_group condition_group::operator||(const condition_group& rhd) const
 {
     condition_group group;
 
-    std::get<0>(group._node) = logical_operator::or_ ;
+    std::get<0>(group._node) = logical_operator::or_;
 
     group._left = std::make_shared<condition_group>(*this);
 
@@ -272,7 +297,7 @@ condition_group condition_group::operator||(const condition& rhd) const
 {
     condition_group group;
 
-    std::get<0>(group._node) = logical_operator::or_ ;
+    std::get<0>(group._node) = logical_operator::or_;
 
     group._left = std::make_shared<condition_group>(*this);
 

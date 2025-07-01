@@ -48,6 +48,11 @@ struct condition_group
                 primary_key = 1 << 0,
 
                 not_null = 1 << 1,
+
+                /**
+                 * Настройка для primary key которая будет возвращать созданный id после insert запроса
+                 */
+                auto_increment = 1 << 2,
             };
 
             /**

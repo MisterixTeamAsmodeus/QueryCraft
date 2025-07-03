@@ -7,7 +7,9 @@ void insert_with_escaping_character(std::stringstream& sql_stream, const std::st
         sql_stream << "'";
     }
 
-    for(const auto ch : value) {
+    for(int i = 0; i < value.size(); i++) {
+        const auto ch = value[i];
+
         switch(ch) {
             case '\'': {
                 sql_stream << "\'\'";
@@ -15,7 +17,13 @@ void insert_with_escaping_character(std::stringstream& sql_stream, const std::st
             }
 
             case '\\': {
-                sql_stream << "\\\\";
+                // Доп обработка для json формата
+                if(i + 1 < value.size() && value[i + 1] == '"') {
+                    sql_stream << ch;
+                } else {
+                    sql_stream << "\\\\";
+                }
+
                 break;
             }
 
